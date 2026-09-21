@@ -1,0 +1,498 @@
+
+\documentclass[11pt]{article}
+
+\usepackage[margin=0.72in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{fancyhdr}
+\usepackage[hidelinks]{hyperref}
+
+\definecolor{ink}{HTML}{243447}
+\definecolor{accent}{HTML}{176B87}
+\definecolor{codebg}{HTML}{F2F5F7}
+\definecolor{codegray}{HTML}{586069}
+
+\hypersetup{colorlinks=true, linkcolor=accent, urlcolor=accent}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{4pt}
+\setlist{nosep,leftmargin=*}
+\setlist[enumerate]{itemsep=2pt}
+\setlist[itemize]{itemsep=2pt}
+\renewcommand{\arraystretch}{1.15}
+
+\lstset{
+	language=Python,
+	basicstyle=\ttfamily\small,
+	backgroundcolor=\color{codebg},
+	frame=single,
+	rulecolor=\color{codebg},
+	columns=fullflexible,
+	keepspaces=true,
+	showstringspaces=false,
+	breaklines=true,
+	keywordstyle=\color{accent},
+	commentstyle=\color{codegray}
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{Data Mining}
+\rhead{Test 1 Study Guide}
+\cfoot{\thepage}
+
+\title{\textcolor{ink}{Data Mining Test 1 Study Guide}}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+\thispagestyle{fancy}
+
+This guide covers Homework 1A/B, Homework 2A/B, and Lectures 01 through 04a (PCA). The test emphasizes concepts, theory, principles, and light interpretation of code. Use this document to understand the ideas first, then use the final checklist to compress the material into the one-page note sheet allowed during Part A.
+
+\section*{Test Format and Strategy}
+\begin{itemize}
+	\item Part A: 70 minutes, mostly multiple choice with some short answers and light code interpretation.
+	\item Closed book except for one single-sided sheet of notes. A calculator, blank scratch paper, and writing tools are allowed.
+	\item Prioritize definitions, assumptions, statistic choice, interpretation of output, and recognizing when a method changes the data representation.
+	\item For any computed statistic, identify the two groups, the outcome, the subtraction order, and the units before interpreting its sign.
+	\item For any p-value or confidence interval, state what was simulated and what population or null-model assumption makes the statement meaningful.
+\end{itemize}
+
+\section{Data, Questions, and Reproducible Discovery}
+\subsection{Observational units and variables}
+\begin{itemize}
+	\item An \textbf{observational unit} is what one row represents: a penguin, shopping session, utility company, customer, or another recorded entity.
+	\item A \textbf{population} is the broader set of units or process about which a claim might be made. The recorded dataset is a sample or observed collection, not automatically the whole population.
+	\item A \textbf{group variable} assigns observations to categories such as male/female, new/returning, or Horeca/Retail.
+	\item An \textbf{outcome} is the measurement being compared, such as body mass, purchase status, spending, or page duration.
+	\item A \textbf{context variable} can explain structure that should be preserved, such as region or weekend status.
+	\item A \textbf{point estimate} is one numerical summary computed from the observed data.
+\end{itemize}
+
+\subsection{A reproducible analysis workflow}
+\begin{enumerate}
+	\item State the question in words and identify the observational unit.
+	\item Identify group, outcome, and relevant context variables.
+	\item Inspect shape, column names, data types, missing values, and category labels.
+	\item Map coded values to readable labels when needed.
+	\item Decide on a statistic that matches the real decision or question.
+	\item Visualize or summarize each group before testing.
+	\item State the data limitations: sampling design, missingness, dependence, and generalizability.
+	\item Use a reproducible random seed for simulation-based results.
+	\item Interpret the result in the original units and in the context of the question.
+\end{enumerate}
+
+\subsection{Description is not causation}
+An observed group difference describes the recorded units. It does not by itself prove that group membership caused the difference. Generalization requires that the recorded units reasonably represent the target population; causal claims require an appropriate design or additional assumptions. If the sampling design is undocumented or non-random, be cautious about extending the result beyond the data.
+
+\subsection{Mean, median, rates, and quartiles}
+Different statistics answer different questions:
+\begin{itemize}
+	\item \textbf{Mean difference}: compares average magnitude and uses every numerical value.
+	\item \textbf{Median difference}: compares the middle of each group and is less affected by extreme values.
+	\item \textbf{Exceedance-rate difference}: compares the proportions above a decision threshold.
+	\item \textbf{Upper-quartile difference}: compares a high-but-not-maximum part of each distribution.
+\end{itemize}
+The statistic is part of the question. A warehouse capacity decision based on whether body mass exceeds 4,500 g calls for an exceedance rate, not merely a mean difference.
+
+\subsection{Useful pandas and NumPy ideas}
+\begin{lstlisting}
+group_values = records.loc[records["group"] == "A", "outcome"].to_numpy()
+counts = records["group"].value_counts()
+rate = (records["outcome"] > threshold).mean()
+\end{lstlisting}
+In NumPy, \texttt{True} behaves like 1 and \texttt{False} like 0 in a mean, so the mean of a Boolean condition is the proportion for which the condition is true. Always check missing values before grouping or calculating a rate.
+
+\section{Permutation Tests and Inference}
+\subsection{The core idea}
+A permutation test asks whether an observed association or group difference is surprising under a \textbf{no-association null model}. Under this model, outcomes are unrelated to group labels, so labels can be reassigned while preserving the relevant structure.
+\begin{enumerate}
+	\item Choose a statistic $T$ that represents the question.
+	\item Calculate the observed statistic $T_{obs}$.
+	\item Define what must remain fixed: often group sizes, and sometimes counts within regions or other strata.
+	\item Randomly reassign labels or otherwise simulate data under the null model.
+	\item Recalculate $T$ for every reassignment to form the null distribution.
+	\item Count how often simulated results are at least as extreme as $T_{obs}$.
+\end{enumerate}
+For a signed difference, for example,
+\[
+T = \operatorname{median}(\text{Retail}) - \operatorname{median}(\text{Horeca}).
+\]
+The sign is meaningful only after the subtraction order is declared. A two-sided test treats unusually positive and unusually negative results as extreme.
+
+\subsection{P-values}
+A p-value is the proportion of null-model simulations that produce a statistic at least as extreme as the observed statistic. It is \textbf{not} the probability that the null hypothesis is true, and it is not the probability that the observed result happened by chance in an unrestricted sense.
+\[
+\hat p = \frac{\#\{\text{simulated statistics at least as extreme}\}+1}{n_{\text{resamples}}+1}.
+\]
+The simulation-resolution floor is about $1/(n_{\text{resamples}}+1)$. A very small reported p-value may mean the result is at the smallest resolution the simulation can show, not that the probability is literally zero.
+
+\subsection{Exchangeability and structure}
+Permutation is valid only for units that are exchangeable under the null model. If region affects the outcome and group composition differs by region, an unstratified permutation may destroy important structure. A region-stratified permutation reassigns labels within each region while preserving the number of each group in each region.
+
+The key question is: \textbf{What relationships should remain fixed under the null model, and what relationship is being broken?}
+
+\subsection{Interpretation template}
+\begin{quote}
+Under the no-association model represented by the permutation procedure, about [p-value] of reassignments produced a statistic at least as extreme as the observed [statistic]. This provides [weak/strong] evidence against no association for the recorded units, subject to the exchangeability and sampling assumptions.
+\end{quote}
+
+\subsection{SciPy code interpretation}
+\begin{lstlisting}
+result = permutation_test(
+		(group_a, group_b),
+		statistic=statistic_function,
+		permutation_type="independent",
+		alternative="two-sided",
+		n_resamples=5000,
+		random_state=7130,
+)
+\end{lstlisting}
+\begin{itemize}
+	\item \texttt{result.statistic}: the observed statistic.
+	\item \texttt{result.pvalue}: the simulated tail proportion.
+	\item \texttt{result.null\_distribution}: statistics from the simulated null worlds.
+	\item \texttt{permutation\_type="independent"}: appropriate when the two groups are independent samples, not paired observations.
+	\item A seed makes the pseudorandom result reproducible; it does not remove sampling uncertainty.
+\end{itemize}
+
+\section{HW1A: Design and Test a Statistic}
+\subsection{Penguin comparison}
+The outcome is \texttt{body\_mass\_g}, the group variable is \texttt{sex}, and the observational unit is a penguin. The mean-difference statistic is
+\[
+T_{mean} = \overline{x}_{male} - \overline{x}_{female}.
+\]
+The test uses an independent, two-sided permutation procedure. Know how to explain why the subtraction order determines the sign and why the statistic must be chosen before looking for a favorable result.
+
+\subsection{Equipment-limit question}
+For a 4,500 g equipment limit, define
+\[
+I_i = \begin{cases}
+1 & \text{if } body\_mass\_g_i > 4500,\\
+0 & \text{otherwise.}
+\end{cases}
+\]
+The exceedance rate in a group is
+\[
+\hat p = \operatorname{mean}(body\_mass\_g > 4500),
+\]
+and the homework statistic is
+\[
+T_{rate} = \hat p_{male} - \hat p_{female}.
+\]
+This statistic directly addresses the fraction of units that exceed capacity. It discards the exact magnitude of values within the below-threshold and above-threshold categories.
+
+\subsection{Likely conceptual traps}
+\begin{itemize}
+	\item A rate difference is not a mean difference.
+	\item A positive male-minus-female result means the male group has the larger estimated value or rate.
+	\item The null distribution comes from reassigning group labels, not from resampling penguins with replacement.
+	\item A statistically unusual difference does not establish that sex caused body mass differences.
+	\item Missing required fields can change group sizes and invalidate a careless calculation.
+\end{itemize}
+
+\section{Bootstrap and Sampling Variability}
+\subsection{The core idea}
+A bootstrap estimates how a statistic would vary across repeated samples by treating the observed data as an empirical approximation to the population. It resamples observed units \textbf{with replacement}, usually within each group, and recalculates the statistic.
+\[
+T_{rate} = \hat p_{new} - \hat p_{returning}.
+\]
+One bootstrap replicate draws a same-sized sample from each original group with replacement and calculates $T_{rate}$ on those samples. Many replicates form the bootstrap distribution.
+
+\subsection{Important terms}
+\begin{itemize}
+	\item \textbf{Point estimate}: the statistic from the original observed groups.
+	\item \textbf{Bootstrap sample}: one resampled dataset, with replacement.
+	\item \textbf{Bootstrap replicate}: the statistic calculated from one bootstrap sample.
+	\item \textbf{Bootstrap distribution}: the collection of many replicates.
+	\item \textbf{Standard error}: the spread of the bootstrap distribution; an estimate of sampling variability.
+	\item \textbf{Percentile confidence interval}: selected quantiles of the bootstrap distribution.
+\end{itemize}
+For a 95\% percentile interval, use
+\[
+[q_{0.025},q_{0.975}].
+\]
+
+\subsection{What a bootstrap interval means}
+If the recorded groups reasonably represent their target populations and the resampling assumptions are reasonable, the interval gives plausible values for the population difference under the method's long-run coverage interpretation. It is not the probability that a fixed parameter is random, and it does not repair biased or unrepresentative data.
+
+\subsection{Ordinary versus structured bootstrap}
+For HW1B, the ordinary bootstrap resamples each visitor group independently. A weekend-preserving or structured bootstrap resamples within cells such as visitor type by weekend status, then recombines the cells. This keeps the observed composition fixed while estimating variability.
+
+Use stratification when the structure is part of the sampling or data-generating design and should not be erased. Compare ordinary and structured results as a sensitivity check rather than assuming one is universally correct.
+
+\subsection{Permutation versus bootstrap}
+\begin{center}
+\small
+\begin{tabular}{p{0.18\linewidth} p{0.36\linewidth} p{0.36\linewidth}}
+\toprule
+\textbf{Question} & \textbf{Permutation test} & \textbf{Bootstrap} \\
+\midrule
+Main purpose & Test evidence against no association & Estimate sampling variability \\
+Simulated world & Null model where labels and outcomes are unrelated & Repeated samples from the empirical distribution \\
+Replacement & Usually reassigns labels; no replacement of values & Samples with replacement \\
+Main output & Null distribution and p-value & Bootstrap distribution, SE, and CI \\
+Key assumption & Exchangeability under the null & Observed units represent the target population sufficiently \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Bootstrap code patterns}
+\begin{lstlisting}
+rng = np.random.default_rng(7130)
+sample_a = rng.choice(group_a, size=len(group_a), replace=True)
+sample_b = rng.choice(group_b, size=len(group_b), replace=True)
+replicate = statistic(sample_a, sample_b)
+
+lower, upper = np.quantile(replicates, [0.025, 0.975])
+\end{lstlisting}
+Seeding once creates a reproducible random sequence. Re-seeding inside every loop iteration would repeatedly generate the same first draw and is incorrect. \texttt{replace=True} is essential: without it, the procedure is sampling without replacement, not a bootstrap.
+
+\section{Distance, Scaling, and Nearest Neighbors}
+\subsection{Representation comes first}
+Distance is calculated between feature vectors. The chosen features, their units, their scales, and their order all affect the result. A nearest neighbor is simply an observation ranked as close under a chosen metric; it is not automatically similar in every meaningful sense.
+
+\subsection{Euclidean and Manhattan distance}
+For vectors $x$ and $y$ with $p$ features,
+\[
+d_{Euclidean}(x,y)=\sqrt{\sum_{j=1}^{p}(x_j-y_j)^2},
+\qquad
+d_{Manhattan}(x,y)=\sum_{j=1}^{p}|x_j-y_j|.
+\]
+Large numerical ranges can dominate squared Euclidean gaps. In the utility example, a high-range feature such as Sales can overwhelm smaller-scale features. Manhattan distance can rank neighbors differently because it adds absolute gaps rather than squaring them.
+
+\subsection{Standardization}
+\[
+z_j = \frac{x_j-\bar{x}_j}{s_j}.
+\]
+After standardization, each feature has mean approximately 0 and standard deviation approximately 1 under the selected convention. Recompute distances after scaling; do not assume raw nearest neighbors remain nearest.
+\begin{itemize}
+	\item HW2A distance scaling uses \texttt{std(ddof=0)}.
+	\item HW2B PCA standardization uses \texttt{std(ddof=1)} to match sample covariance and the homework calculations.
+\end{itemize}
+Standardization is useful when units or ranges should not determine importance, but it can remove meaningful domain scale.
+
+\subsection{Distance workflow and code cues}
+\begin{enumerate}
+	\item Select and order the features explicitly.
+	\item Represent the anchor as a 2D row, for example \texttt{matrix.loc[[anchor]]}.
+	\item Calculate distances to all rows.
+	\item Remove the anchor's self-distance before ranking.
+	\item Sort ascending for distance and take the nearest $k$ rows.
+\end{enumerate}
+\begin{lstlisting}
+distances = cdist(matrix.loc[[anchor]], matrix, metric="euclidean").ravel()
+ranking = pd.Series(distances, index=matrix.index).drop(anchor).sort_values().head(3)
+\end{lstlisting}
+Using double brackets preserves a two-dimensional shape for \texttt{cdist}. Forgetting to remove the anchor returns the trivial answer: the anchor itself at distance 0.
+
+\section{Cosine and Jaccard Similarity}
+The similarity measure encodes what ``similar'' means. Euclidean and Manhattan compare coordinate gaps; cosine compares direction; Jaccard compares binary set overlap.
+
+\subsection{Cosine similarity}
+\[
+s_{cos}(x,y)=\frac{x^Ty}{\lVert x\rVert_2\lVert y\rVert_2},
+\qquad
+\lVert x\rVert_2=\sqrt{\sum_jx_j^2}.
+\]
+Cosine measures the angle between vectors. It focuses on proportions and ignores overall magnitude. Vectors with the same direction, even if one is 10 times larger, have cosine similarity 1. A zero vector has no defined direction, which is why all-zero sessions were excluded in the homework comparison.
+
+SciPy's \texttt{cdist(..., metric="cosine")} returns cosine distance, so
+\[
+similarity = 1-distance.
+\]
+
+\subsection{Jaccard similarity}
+Convert quantities to presence/absence sets first. If $A$ and $B$ are products purchased by two customers,
+\[
+J(A,B)=\frac{|A\cap B|}{|A\cup B|}.
+\]
+Jaccard ignores quantities and shared absences. It is 1 for identical sets and 0 for no shared present items. The union matters: many shared items do not guarantee a large Jaccard value if the union is even larger.
+
+\subsection{Metric comparison}
+\begin{center}
+\small
+\begin{tabular}{p{0.17\linewidth} p{0.22\linewidth} p{0.25\linewidth} p{0.25\linewidth}}
+\toprule
+\textbf{Metric} & \textbf{Representation} & \textbf{Sensitive to} & \textbf{Ignores or emphasizes} \\
+\midrule
+Euclidean & Numeric quantities & Scale and coordinate gaps & Nothing by default \\
+Manhattan & Numeric quantities & Absolute coordinate gaps & Less outlier amplification than Euclidean \\
+Cosine & Numeric vector & Relative proportions/direction & Overall magnitude \\
+Jaccard & Binary presence set & Shared presence relative to union & Quantities and shared absences \\
+\bottomrule
+\end{tabular}
+\end{center}
+There is no universally best metric independent of the analysis goal.
+
+\section{PCA Foundations}
+\subsection{Why dimensionality reduction?}
+Dimensionality reduction represents observations with fewer coordinates while retaining useful information.
+\begin{itemize}
+	\item \textbf{Feature selection}: keep a subset of original features; meanings remain directly recognizable.
+	\item \textbf{Feature extraction}: construct new features from the originals; PCA does this through linear combinations.
+\end{itemize}
+PCA is useful when several measurements contain correlated or redundant variation and a lower-dimensional summary is acceptable.
+
+\subsection{Variance and covariance}
+\[
+s^2=\frac{1}{n-1}\sum_{i=1}^{n}(x_i-\bar{x})^2,
+\qquad
+\operatorname{Cov}(x_1,x_2)=\frac{1}{n-1}\sum_{i=1}^{n}(x_{1i}-\bar{x}_1)(x_{2i}-\bar{x}_2).
+\]
+\[
+S=\begin{bmatrix}
+\operatorname{Var}(x_1)&\operatorname{Cov}(x_1,x_2)\\
+\operatorname{Cov}(x_1,x_2)&\operatorname{Var}(x_2)
+\end{bmatrix}.
+\]
+The diagonal contains variances; the off-diagonal entries contain covariances. Total variance is the sum of feature variances, and equivalently the sum of PCA eigenvalues.
+
+\subsection{Principal components and eigenvectors}
+A direction vector $w$ has unit length. In two dimensions, if $w=(a,b)$, then $a^2+b^2=1$. The coordinate or score of a centered observation along that direction is
+\[
+z=w^Tx_c=ax_{1,c}+bx_{2,c}.
+\]
+The first principal component is the direction with maximum projected variance. Each later component is perpendicular to the previous components and captures the greatest remaining variance. The eigenvalue equation is
+\[
+Sw=\lambda w.
+\]
+\begin{itemize}
+	\item $w$ is an eigenvector and gives component direction/loadings.
+	\item $\lambda$ is the variance captured by that component.
+	\item Components are ordered from largest to smallest eigenvalue.
+	\item The sign of an eigenvector is arbitrary: flipping every loading and score sign describes the same axis.
+\end{itemize}
+
+\subsection{Variance retention}
+\[
+\text{explained fraction}_k=\frac{\lambda_k}{\sum_j\lambda_j},
+\qquad
+\text{cumulative retention}_K=\frac{\sum_{k=1}^{K}\lambda_k}{\sum_j\lambda_j}.
+\]
+Choose the number of components based on the required information retention and the domain cost of losing detail. A 90\% rule is a practical criterion, not a universal law.
+
+\subsection{Standardization before PCA}
+If features have different units or scales, a large-unit feature can dominate variance. Standardize when each feature should contribute comparably. For HW2B, use the sample standard deviation (\texttt{ddof=1}) before PCA.
+
+\subsection{Loadings, scores, eigenvalues, and reconstruction}
+\begin{itemize}
+	\item \textbf{Loadings}: coefficients in \texttt{pca.components\_}; component directions shared by all records.
+	\item \textbf{Scores}: rows returned by \texttt{pca.transform(X)}; each record's coordinates in component space.
+	\item \textbf{Eigenvalues}: \texttt{pca.explained\_variance\_}; variance across all records along each component.
+	\item \textbf{Explained variance ratios}: \texttt{pca.explained\_variance\_ratio\_}; fractions used for retention decisions.
+	\item \textbf{Reconstruction}: \texttt{pca.inverse\_transform(scores)} maps reduced coordinates back to the original standardized feature space. Undo standardization to return to original units.
+\end{itemize}
+Interpret a loading by its sign and magnitude relative to other loadings in the same component. A high positive PC1 score indicates an observation aligned with positive PC1 loadings; it does not mean the observation has a high value for every original feature.
+
+\subsection{PCA code workflow}
+\begin{lstlisting}
+means = features.mean()
+scales = features.std(ddof=1)
+standardized = (features - means) / scales
+
+pca = PCA(n_components=4, svd_solver="full")
+pca.fit(standardized)
+scores = pca.transform(standardized)
+rebuilt_standardized = pca.inverse_transform(scores)
+\end{lstlisting}
+\texttt{fit} learns directions from training data. \texttt{transform} projects observations using those directions. New observations must be standardized with the saved training means and scales before transformation.
+
+\subsection{HW2B facts to know}
+\begin{itemize}
+	\item The penguin PCA uses four standardized measurements: bill length, bill depth, flipper length, and body mass.
+	\item Three components retain 97.29\% of the variance, so three are sufficient for a 90\% target in the homework.
+	\item PC1 has strong contributions from bill length, flipper length, and body mass, with an opposing bill-depth contribution in the course result.
+	\item Eigenvalues describe variation across all penguins; scores describe one penguin's location.
+	\item Fewer retained components generally increase reconstruction error. High total variance retention does not guarantee equally accurate reconstruction for every individual feature.
+\end{itemize}
+
+\section{Homework Reference Sheet}
+\subsection{HW1A}
+\begin{itemize}
+	\item Data: 342 complete penguins; \texttt{sex} and \texttt{body\_mass\_g}.
+	\item Statistic: male mean minus female mean; also male minus female rate above 4,500 g.
+	\item Method: independent, two-sided permutation test; 5,000 resamples; seed 7130.
+	\item Main reasoning: choose a statistic that matches the decision, preserve group sizes, and interpret p-values under label exchangeability.
+\end{itemize}
+
+\subsection{HW1B}
+\begin{itemize}
+	\item Data: online shopping sessions; new/returning visitor, purchase Boolean, weekend.
+	\item Data size: 12,245 sessions before excluding 85 \texttt{Other} visitor labels.
+	\item Statistic: new purchase rate minus returning purchase rate.
+	\item Method: 10,000 bootstrap replicates, with replacement, percentile interval.
+	\item Compare ordinary resampling with weekend-preserving resampling.
+\end{itemize}
+
+\subsection{HW2A}
+\begin{itemize}
+	\item Data: 11,610 usable shopping sessions after excluding all-zero rows for cosine comparisons.
+	\item Anchor: session 58.
+	\item Features: administrative, informational, and product-related page durations.
+	\item Tasks: three nearest sessions using raw and standardized Euclidean, Manhattan, cosine, and Jaccard comparisons.
+	\item Main reasoning: metric choice and scaling can change the neighbor ranking.
+\end{itemize}
+
+\subsection{HW2B}
+\begin{itemize}
+	\item Data: 342 complete penguins and four measurements.
+	\item Tasks: hand-center data, form covariance matrix, verify $Sw=\lambda w$, calculate a PC score, fit PCA, interpret loadings and scores, select components, and compare reconstruction.
+	\item Main result: three components retain 97.29\% of standardized variance.
+\end{itemize}
+
+\section{Common Code-Reading Questions}
+When shown code, ask these questions in order:
+\begin{enumerate}
+	\item What are the rows and what does each selected column mean?
+	\item Is the code computing a statistic, generating a null distribution, generating a bootstrap distribution, or measuring distance?
+	\item Is sampling with or without replacement? Are labels being permuted or values being resampled?
+	\item What is the subtraction order and therefore the meaning of the sign?
+	\item Is the data numeric, standardized numeric, or Boolean presence/absence?
+	\item Does a library function return distance or similarity? Does it include the anchor itself?
+	\item Which degrees-of-freedom convention is used for standard deviation?
+	\item Does the output describe one observation, all observations, or a component?
+\end{enumerate}
+High-value code details include \texttt{.mean()} on a Boolean condition, \texttt{replace=True}, \texttt{np.quantile}, $1-$ cosine distance, \texttt{.drop(anchor)}, \texttt{ddof=0} versus \texttt{ddof=1}, \texttt{fit} versus \texttt{transform}, and \texttt{components\_} versus \texttt{transform()} output.
+
+\section{One-Sheet Notes Checklist}
+The allowed sheet may contain formulas and notes but no worked problems. Compress these items rather than copying long explanations:
+\begin{itemize}
+	\item Observational unit, population versus sample, group/outcome/context, and description versus causation.
+	\item Mean, median, exceedance-rate, and upper-quartile differences; write the subtraction order.
+	\item Permutation: no association, exchangeability, preserved structure, null distribution, p-value, two-sided extremeness, simulation floor.
+	\item Bootstrap: empirical distribution, with replacement, replicate versus distribution, standard error, percentile CI.
+	\item The one-line permutation/bootstrap distinction.
+	\item Euclidean, Manhattan, cosine, and Jaccard formulas plus what each ignores.
+	\item Standardization formula and the course conventions: HW2A \texttt{ddof=0}; HW2B \texttt{ddof=1}.
+	\item PCA: covariance matrix, $Sw=\lambda w$, score $w^Tx_c$, variance ratio, cumulative retention.
+	\item PCA vocabulary: loading, score, eigenvalue, \texttt{fit}, \texttt{transform}, \texttt{inverse\_transform}.
+	\item Code traps: Boolean mean, \texttt{replace=True}, self-distance, $1-$ distance, zero vectors, and \texttt{components\_} versus scores.
+	\item Interpretation sentence starters for p-values, confidence intervals, distances, similarities, and loadings.
+\end{itemize}
+
+\section{Final Self-Test}
+Before the exam, be able to answer these without opening the notebooks:
+\begin{enumerate}
+	\item Why can a mean difference and an exceedance-rate difference tell different stories?
+	\item What exactly is randomized in a permutation test, and what must be preserved?
+	\item Why is a bootstrap sample drawn with replacement?
+	\item What does a 95\% percentile bootstrap interval summarize?
+	\item Why can standardization change nearest neighbors?
+	\item How do cosine similarity and Jaccard similarity treat magnitude and absence?
+	\item Why is the anchor removed before ranking nearest neighbors?
+	\item What do eigenvectors, eigenvalues, loadings, and scores each represent?
+	\item Why should PCA use saved means and scales when transforming new data?
+	\item Why can a component retain high total variance while reconstructing one feature poorly?
+\end{enumerate}
+
+\end{document}
