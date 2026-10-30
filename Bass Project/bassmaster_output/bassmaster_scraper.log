@@ -1,0 +1,618 @@
+2026-10-21 13:03:20,301 | INFO | Downloading tournament index: https://bassmasterfantasy.com/TournamentResultsList.aspx
+2026-10-21 13:03:21,016 | INFO | Identified 150 unique tournament pages.
+2026-10-21 13:03:21,016 | INFO | Tournament 1 of 150
+2026-10-21 13:03:21,019 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=1&year=2012
+2026-10-21 13:03:22,130 | INFO | Tournament 2 of 150
+2026-10-21 13:03:22,130 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=2&year=2012
+2026-10-21 13:03:23,274 | INFO | Tournament 3 of 150
+2026-10-21 13:03:23,274 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=3&year=2012
+2026-10-21 13:03:24,435 | INFO | Tournament 4 of 150
+2026-10-21 13:03:24,435 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=4&year=2012
+2026-10-21 13:03:25,597 | INFO | Tournament 5 of 150
+2026-10-21 13:03:25,598 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=5&year=2012
+2026-10-21 13:03:26,776 | INFO | Tournament 6 of 150
+2026-10-21 13:03:26,776 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=6&year=2012
+2026-10-21 13:03:27,928 | INFO | Tournament 7 of 150
+2026-10-21 13:03:27,929 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=7&year=2012
+2026-10-21 13:03:29,078 | INFO | Tournament 8 of 150
+2026-10-21 13:03:29,079 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=8&year=2012
+2026-10-21 13:03:30,317 | INFO | Tournament 9 of 150
+2026-10-21 13:03:30,318 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=9&year=2012
+2026-10-21 13:03:31,463 | INFO | Tournament 10 of 150
+2026-10-21 13:03:31,463 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=1&year=2013
+2026-10-21 13:03:32,617 | INFO | Tournament 11 of 150
+2026-10-21 13:03:32,617 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=2&year=2013
+2026-10-21 13:03:33,772 | INFO | Tournament 12 of 150
+2026-10-21 13:03:33,772 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=3&year=2013
+2026-10-21 13:03:34,987 | INFO | Tournament 13 of 150
+2026-10-21 13:03:34,987 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=4&year=2013
+2026-10-21 13:03:36,181 | INFO | Tournament 14 of 150
+2026-10-21 13:03:36,182 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=5&year=2013
+2026-10-21 13:03:37,338 | INFO | Tournament 15 of 150
+2026-10-21 13:03:37,338 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=6&year=2013
+2026-10-21 13:03:38,496 | INFO | Tournament 16 of 150
+2026-10-21 13:03:38,496 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=7&year=2013
+2026-10-21 13:03:39,655 | INFO | Tournament 17 of 150
+2026-10-21 13:03:39,655 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=8&year=2013
+2026-10-21 13:03:40,893 | INFO | Tournament 18 of 150
+2026-10-21 13:03:40,894 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=9&year=2013
+2026-10-21 13:03:42,050 | INFO | Tournament 19 of 150
+2026-10-21 13:03:42,051 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=1&year=2014
+2026-10-21 13:03:43,205 | INFO | Tournament 20 of 150
+2026-10-21 13:03:43,205 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=2&year=2014
+2026-10-21 13:03:44,378 | INFO | Tournament 21 of 150
+2026-10-21 13:03:44,379 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=3&year=2014
+2026-10-21 13:03:45,632 | INFO | Tournament 22 of 150
+2026-10-21 13:03:45,632 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=4&year=2014
+2026-10-21 13:03:46,804 | INFO | Tournament 23 of 150
+2026-10-21 13:03:46,804 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=5&year=2014
+2026-10-21 13:03:47,973 | INFO | Tournament 24 of 150
+2026-10-21 13:03:47,973 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=6&year=2014
+2026-10-21 13:03:49,187 | INFO | Tournament 25 of 150
+2026-10-21 13:03:49,187 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=7&year=2014
+2026-10-21 13:03:50,434 | INFO | Tournament 26 of 150
+2026-10-21 13:03:50,434 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=9&year=2014
+2026-10-21 13:03:51,603 | INFO | Tournament 27 of 150
+2026-10-21 13:03:51,603 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=10&year=2014
+2026-10-21 13:03:52,838 | INFO | Tournament 28 of 150
+2026-10-21 13:03:52,838 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=1&year=2015
+2026-10-21 13:03:53,997 | INFO | Tournament 29 of 150
+2026-10-21 13:03:53,997 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=2&year=2015
+2026-10-21 13:03:55,203 | INFO | Tournament 30 of 150
+2026-10-21 13:03:55,204 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=3&year=2015
+2026-10-21 13:03:56,374 | INFO | Tournament 31 of 150
+2026-10-21 13:03:56,375 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=4&year=2015
+2026-10-21 13:03:57,578 | INFO | Tournament 32 of 150
+2026-10-21 13:03:57,579 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=5&year=2015
+2026-10-21 13:03:58,765 | INFO | Tournament 33 of 150
+2026-10-21 13:03:58,765 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=6&year=2015
+2026-10-21 13:03:59,938 | INFO | Tournament 34 of 150
+2026-10-21 13:03:59,938 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=7&year=2015
+2026-10-21 13:04:01,140 | INFO | Tournament 35 of 150
+2026-10-21 13:04:01,140 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=8&year=2015
+2026-10-21 13:04:02,301 | INFO | Tournament 36 of 150
+2026-10-21 13:04:02,301 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=9&year=2015
+2026-10-21 13:04:03,465 | INFO | Tournament 37 of 150
+2026-10-21 13:04:03,466 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=10&year=2015
+2026-10-21 13:04:04,601 | INFO | Tournament 38 of 150
+2026-10-21 13:04:04,601 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=1&year=2016
+2026-10-21 13:04:05,758 | INFO | Tournament 39 of 150
+2026-10-21 13:04:05,759 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=2&year=2016
+2026-10-21 13:04:07,014 | INFO | Tournament 40 of 150
+2026-10-21 13:04:07,015 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=3&year=2016
+2026-10-21 13:04:08,192 | INFO | Tournament 41 of 150
+2026-10-21 13:04:08,192 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=4&year=2016
+2026-10-21 13:04:09,368 | INFO | Tournament 42 of 150
+2026-10-21 13:04:09,368 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=5&year=2016
+2026-10-21 13:04:10,543 | INFO | Tournament 43 of 150
+2026-10-21 13:04:10,544 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=6&year=2016
+2026-10-21 13:04:11,736 | INFO | Tournament 44 of 150
+2026-10-21 13:04:11,736 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=7&year=2016
+2026-10-21 13:04:12,910 | INFO | Tournament 45 of 150
+2026-10-21 13:04:12,911 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=8&year=2016
+2026-10-21 13:04:14,079 | INFO | Tournament 46 of 150
+2026-10-21 13:04:14,079 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=9&year=2016
+2026-10-21 13:04:15,253 | INFO | Tournament 47 of 150
+2026-10-21 13:04:15,254 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=10&year=2016
+2026-10-21 13:04:16,443 | INFO | Tournament 48 of 150
+2026-10-21 13:04:16,443 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=11&year=2016
+2026-10-21 13:04:17,532 | INFO | Tournament 49 of 150
+2026-10-21 13:04:17,533 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=1&year=2017
+2026-10-21 13:04:18,767 | INFO | Tournament 50 of 150
+2026-10-21 13:04:18,768 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=2&year=2017
+2026-10-21 13:04:19,944 | INFO | Tournament 51 of 150
+2026-10-21 13:04:19,944 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=3&year=2017
+2026-10-21 13:04:21,038 | INFO | Tournament 52 of 150
+2026-10-21 13:04:21,039 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=4&year=2017
+2026-10-21 13:04:22,218 | INFO | Tournament 53 of 150
+2026-10-21 13:04:22,218 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=5&year=2017
+2026-10-21 13:04:23,395 | INFO | Tournament 54 of 150
+2026-10-21 13:04:23,395 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=6&year=2017
+2026-10-21 13:04:24,564 | INFO | Tournament 55 of 150
+2026-10-21 13:04:24,565 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=7&year=2017
+2026-10-21 13:04:25,741 | INFO | Tournament 56 of 150
+2026-10-21 13:04:25,741 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=8&year=2017
+2026-10-21 13:04:26,937 | INFO | Tournament 57 of 150
+2026-10-21 13:04:26,937 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=9&year=2017
+2026-10-21 13:04:28,108 | INFO | Tournament 58 of 150
+2026-10-21 13:04:28,108 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=10&year=2017
+2026-10-21 13:04:29,277 | INFO | Tournament 59 of 150
+2026-10-21 13:04:29,277 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=11&year=2017
+2026-10-21 13:04:30,368 | INFO | Tournament 60 of 150
+2026-10-21 13:04:30,368 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=1&year=2018
+2026-10-21 13:04:31,659 | INFO | Tournament 61 of 150
+2026-10-21 13:04:31,659 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=2&year=2018
+2026-10-21 13:04:32,747 | INFO | Tournament 62 of 150
+2026-10-21 13:04:32,748 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=3&year=2018
+2026-10-21 13:04:33,923 | INFO | Tournament 63 of 150
+2026-10-21 13:04:33,923 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=4&year=2018
+2026-10-21 13:04:35,136 | INFO | Tournament 64 of 150
+2026-10-21 13:04:35,136 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=5&year=2018
+2026-10-21 13:04:36,366 | INFO | Tournament 65 of 150
+2026-10-21 13:04:36,367 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=6&year=2018
+2026-10-21 13:04:37,542 | INFO | Tournament 66 of 150
+2026-10-21 13:04:37,542 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=7&year=2018
+2026-10-21 13:04:38,713 | INFO | Tournament 67 of 150
+2026-10-21 13:04:38,713 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=8&year=2018
+2026-10-21 13:04:39,888 | INFO | Tournament 68 of 150
+2026-10-21 13:04:39,888 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=9&year=2018
+2026-10-21 13:04:41,084 | INFO | Tournament 69 of 150
+2026-10-21 13:04:41,084 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=10&year=2018
+2026-10-21 13:04:42,181 | INFO | Tournament 70 of 150
+2026-10-21 13:04:42,181 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=1&year=2019
+2026-10-21 13:04:43,355 | INFO | Tournament 71 of 150
+2026-10-21 13:04:43,355 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=2&year=2019
+2026-10-21 13:04:44,474 | INFO | Tournament 72 of 150
+2026-10-21 13:04:44,474 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=3&year=2019
+2026-10-21 13:04:45,568 | INFO | Tournament 73 of 150
+2026-10-21 13:04:45,569 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=4&year=2019
+2026-10-21 13:04:46,688 | INFO | Tournament 74 of 150
+2026-10-21 13:04:46,688 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=5&year=2019
+2026-10-21 13:04:47,802 | INFO | Tournament 75 of 150
+2026-10-21 13:04:47,802 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=6&year=2019
+2026-10-21 13:04:48,950 | INFO | Tournament 76 of 150
+2026-10-21 13:04:48,950 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=7&year=2019
+2026-10-21 13:04:50,067 | INFO | Tournament 77 of 150
+2026-10-21 13:04:50,067 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=8&year=2019
+2026-10-21 13:04:51,250 | INFO | Tournament 78 of 150
+2026-10-21 13:04:51,250 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=9&year=2019
+2026-10-21 13:04:52,374 | INFO | Tournament 79 of 150
+2026-10-21 13:04:52,374 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=10&year=2019
+2026-10-21 13:04:53,495 | INFO | Tournament 80 of 150
+2026-10-21 13:04:53,495 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=11&year=2019
+2026-10-21 13:04:54,585 | INFO | Tournament 81 of 150
+2026-10-21 13:04:54,585 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=1&year=2020
+2026-10-21 13:04:55,793 | INFO | Tournament 82 of 150
+2026-10-21 13:04:55,793 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=2&year=2020
+2026-10-21 13:04:56,885 | INFO | Tournament 83 of 150
+2026-10-21 13:04:56,886 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=3&year=2020
+2026-10-21 13:04:58,025 | INFO | Tournament 84 of 150
+2026-10-21 13:04:58,025 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=4&year=2020
+2026-10-21 13:04:59,165 | INFO | Tournament 85 of 150
+2026-10-21 13:04:59,166 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=5&year=2020
+2026-10-21 13:05:00,341 | INFO | Tournament 86 of 150
+2026-10-21 13:05:00,341 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=6&year=2020
+2026-10-21 13:05:01,529 | INFO | Tournament 87 of 150
+2026-10-21 13:05:01,529 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=7&year=2020
+2026-10-21 13:05:02,666 | INFO | Tournament 88 of 150
+2026-10-21 13:05:02,666 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=8&year=2020
+2026-10-21 13:05:03,801 | INFO | Tournament 89 of 150
+2026-10-21 13:05:03,802 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=9&year=2020
+2026-10-21 13:05:04,946 | INFO | Tournament 90 of 150
+2026-10-21 13:05:04,946 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=10&year=2020
+2026-10-21 13:05:06,085 | INFO | Tournament 91 of 150
+2026-10-21 13:05:06,085 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=1&year=2021
+2026-10-21 13:05:07,301 | INFO | Tournament 92 of 150
+2026-10-21 13:05:07,301 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=2&year=2021
+2026-10-21 13:05:08,428 | INFO | Tournament 93 of 150
+2026-10-21 13:05:08,428 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=3&year=2021
+2026-10-21 13:05:09,520 | INFO | Tournament 94 of 150
+2026-10-21 13:05:09,520 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=4&year=2021
+2026-10-21 13:05:10,608 | INFO | Tournament 95 of 150
+2026-10-21 13:05:10,609 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=5&year=2021
+2026-10-21 13:05:11,694 | INFO | Tournament 96 of 150
+2026-10-21 13:05:11,694 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=6&year=2021
+2026-10-21 13:05:12,782 | INFO | Tournament 97 of 150
+2026-10-21 13:05:12,783 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=7&year=2021
+2026-10-21 13:05:13,868 | INFO | Tournament 98 of 150
+2026-10-21 13:05:13,868 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=8&year=2021
+2026-10-21 13:05:14,946 | INFO | Tournament 99 of 150
+2026-10-21 13:05:14,946 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=9&year=2021
+2026-10-21 13:05:16,040 | INFO | Tournament 100 of 150
+2026-10-21 13:05:16,040 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=10&year=2021
+2026-10-21 13:05:17,124 | INFO | Tournament 101 of 150
+2026-10-21 13:05:17,125 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=1&year=2022
+2026-10-21 13:05:18,313 | INFO | Tournament 102 of 150
+2026-10-21 13:05:18,313 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=2&year=2022
+2026-10-21 13:05:19,401 | INFO | Tournament 103 of 150
+2026-10-21 13:05:19,401 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=3&year=2022
+2026-10-21 13:05:20,469 | INFO | Tournament 104 of 150
+2026-10-21 13:05:20,469 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=4&year=2022
+2026-10-21 13:05:21,558 | INFO | Tournament 105 of 150
+2026-10-21 13:05:21,558 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=5&year=2022
+2026-10-21 13:05:22,647 | INFO | Tournament 106 of 150
+2026-10-21 13:05:22,647 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=6&year=2022
+2026-10-21 13:05:23,730 | INFO | Tournament 107 of 150
+2026-10-21 13:05:23,730 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=7&year=2022
+2026-10-21 13:05:24,811 | INFO | Tournament 108 of 150
+2026-10-21 13:05:24,812 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=8&year=2022
+2026-10-21 13:05:25,929 | INFO | Tournament 109 of 150
+2026-10-21 13:05:25,929 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=9&year=2022
+2026-10-21 13:05:27,019 | INFO | Tournament 110 of 150
+2026-10-21 13:05:27,019 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=10&year=2022
+2026-10-21 13:05:28,105 | INFO | Tournament 111 of 150
+2026-10-21 13:05:28,105 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=1&year=2023
+2026-10-21 13:05:29,328 | INFO | Tournament 112 of 150
+2026-10-21 13:05:29,328 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=2&year=2023
+2026-10-21 13:05:30,421 | INFO | Tournament 113 of 150
+2026-10-21 13:05:30,421 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=3&year=2023
+2026-10-21 13:05:31,489 | INFO | Tournament 114 of 150
+2026-10-21 13:05:31,490 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=4&year=2023
+2026-10-21 13:05:32,589 | INFO | Tournament 115 of 150
+2026-10-21 13:05:32,589 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=5&year=2023
+2026-10-21 13:05:33,682 | INFO | Tournament 116 of 150
+2026-10-21 13:05:33,682 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=6&year=2023
+2026-10-21 13:05:34,777 | INFO | Tournament 117 of 150
+2026-10-21 13:05:34,778 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=7&year=2023
+2026-10-21 13:05:35,875 | INFO | Tournament 118 of 150
+2026-10-21 13:05:35,875 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=8&year=2023
+2026-10-21 13:05:37,023 | INFO | Tournament 119 of 150
+2026-10-21 13:05:37,023 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=9&year=2023
+2026-10-21 13:05:38,117 | INFO | Tournament 120 of 150
+2026-10-21 13:05:38,117 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=10&year=2023
+2026-10-21 13:05:39,285 | INFO | Tournament 121 of 150
+2026-10-21 13:05:39,285 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=1&year=2024
+2026-10-21 13:05:40,388 | INFO | Tournament 122 of 150
+2026-10-21 13:05:40,389 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=2&year=2024
+2026-10-21 13:05:41,475 | INFO | Tournament 123 of 150
+2026-10-21 13:05:41,475 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=3&year=2024
+2026-10-21 13:05:42,552 | INFO | Tournament 124 of 150
+2026-10-21 13:05:42,553 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=4&year=2024
+2026-10-21 13:05:43,649 | INFO | Tournament 125 of 150
+2026-10-21 13:05:43,650 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=5&year=2024
+2026-10-21 13:05:44,747 | INFO | Tournament 126 of 150
+2026-10-21 13:05:44,747 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=6&year=2024
+2026-10-21 13:05:45,847 | INFO | Tournament 127 of 150
+2026-10-21 13:05:45,847 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=7&year=2024
+2026-10-21 13:05:46,945 | INFO | Tournament 128 of 150
+2026-10-21 13:05:46,945 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=8&year=2024
+2026-10-21 13:05:48,040 | INFO | Tournament 129 of 150
+2026-10-21 13:05:48,040 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=9&year=2024
+2026-10-21 13:05:49,138 | INFO | Tournament 130 of 150
+2026-10-21 13:05:49,139 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=10&year=2024
+2026-10-21 13:05:50,297 | INFO | Tournament 131 of 150
+2026-10-21 13:05:50,297 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=1&year=2025
+2026-10-21 13:05:51,448 | INFO | Tournament 132 of 150
+2026-10-21 13:05:51,448 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=2&year=2025
+2026-10-21 13:05:52,545 | INFO | Tournament 133 of 150
+2026-10-21 13:05:52,545 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=3&year=2025
+2026-10-21 13:05:53,624 | INFO | Tournament 134 of 150
+2026-10-21 13:05:53,625 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=4&year=2025
+2026-10-21 13:05:54,722 | INFO | Tournament 135 of 150
+2026-10-21 13:05:54,722 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=5&year=2025
+2026-10-21 13:05:55,820 | INFO | Tournament 136 of 150
+2026-10-21 13:05:55,821 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=6&year=2025
+2026-10-21 13:05:56,917 | INFO | Tournament 137 of 150
+2026-10-21 13:05:56,917 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=7&year=2025
+2026-10-21 13:05:58,008 | INFO | Tournament 138 of 150
+2026-10-21 13:05:58,008 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=8&year=2025
+2026-10-21 13:05:59,100 | INFO | Tournament 139 of 150
+2026-10-21 13:05:59,101 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=9&year=2025
+2026-10-21 13:06:00,258 | INFO | Tournament 140 of 150
+2026-10-21 13:06:00,258 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=10&year=2025
+2026-10-21 13:06:01,353 | INFO | Tournament 141 of 150
+2026-10-21 13:06:01,353 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=1&year=2026
+2026-10-21 13:06:02,446 | INFO | Tournament 142 of 150
+2026-10-21 13:06:02,449 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=2&year=2026
+2026-10-21 13:06:03,543 | INFO | Tournament 143 of 150
+2026-10-21 13:06:03,543 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=3&year=2026
+2026-10-21 13:06:04,616 | INFO | Tournament 144 of 150
+2026-10-21 13:06:04,616 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=4&year=2026
+2026-10-21 13:06:05,743 | INFO | Tournament 145 of 150
+2026-10-21 13:06:05,743 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=5&year=2026
+2026-10-21 13:06:06,835 | INFO | Tournament 146 of 150
+2026-10-21 13:06:06,836 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=6&year=2026
+2026-10-21 13:06:07,928 | INFO | Tournament 147 of 150
+2026-10-21 13:06:07,928 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=7&year=2026
+2026-10-21 13:06:09,056 | INFO | Tournament 148 of 150
+2026-10-21 13:06:09,057 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=8&year=2026
+2026-10-21 13:06:10,219 | INFO | Tournament 149 of 150
+2026-10-21 13:06:10,220 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=9&year=2026
+2026-10-21 13:06:11,320 | INFO | Tournament 150 of 150
+2026-10-21 13:06:11,320 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=10&year=2026
+2026-10-21 13:06:11,407 | INFO | Scrape audit saved to bassmaster_output/bassmaster_scrape_audit.csv
+2026-10-21 13:06:11,646 | INFO | Processing complete.
+2026-10-21 13:06:11,646 | INFO | Participant records: 13968
+2026-10-21 13:06:11,646 | INFO | Successful tournament pages: 150
+2026-10-21 13:06:11,646 | INFO | Other tournament outcomes: 0
+2026-10-21 13:06:11,646 | INFO | Output file: bassmaster_output/bassmaster_complete_participant_records.csv
+2026-10-21 13:06:11,646 | INFO | Dataset shape: (13968, 22)
+2026-10-21 13:26:46,622 | INFO | Downloading tournament index: https://bassmasterfantasy.com/TournamentResultsList.aspx
+2026-10-21 13:26:47,216 | INFO | Identified 150 unique tournament pages.
+2026-10-21 13:26:47,216 | INFO | Tournament 1 of 150
+2026-10-21 13:26:47,216 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=1&year=2012
+2026-10-21 13:26:48,293 | INFO | Tournament 2 of 150
+2026-10-21 13:26:48,293 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=2&year=2012
+2026-10-21 13:26:49,442 | INFO | Tournament 3 of 150
+2026-10-21 13:26:49,442 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=3&year=2012
+2026-10-21 13:26:50,645 | INFO | Tournament 4 of 150
+2026-10-21 13:26:50,645 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=4&year=2012
+2026-10-21 13:26:51,787 | INFO | Tournament 5 of 150
+2026-10-21 13:26:51,787 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=5&year=2012
+2026-10-21 13:26:52,940 | INFO | Tournament 6 of 150
+2026-10-21 13:26:52,940 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=6&year=2012
+2026-10-21 13:26:54,144 | INFO | Tournament 7 of 150
+2026-10-21 13:26:54,145 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=7&year=2012
+2026-10-21 13:26:55,368 | INFO | Tournament 8 of 150
+2026-10-21 13:26:55,380 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=8&year=2012
+2026-10-21 13:26:56,585 | INFO | Tournament 9 of 150
+2026-10-21 13:26:56,585 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=9&year=2012
+2026-10-21 13:26:57,798 | INFO | Tournament 10 of 150
+2026-10-21 13:26:57,799 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=1&year=2013
+2026-10-21 13:26:58,921 | INFO | Tournament 11 of 150
+2026-10-21 13:26:58,921 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=2&year=2013
+2026-10-21 13:27:00,085 | INFO | Tournament 12 of 150
+2026-10-21 13:27:00,085 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=3&year=2013
+2026-10-21 13:27:01,343 | INFO | Tournament 13 of 150
+2026-10-21 13:27:01,343 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=4&year=2013
+2026-10-21 13:27:02,509 | INFO | Tournament 14 of 150
+2026-10-21 13:27:02,509 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=5&year=2013
+2026-10-21 13:27:03,656 | INFO | Tournament 15 of 150
+2026-10-21 13:27:03,656 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=6&year=2013
+2026-10-21 13:27:04,906 | INFO | Tournament 16 of 150
+2026-10-21 13:27:04,907 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=7&year=2013
+2026-10-21 13:27:06,065 | INFO | Tournament 17 of 150
+2026-10-21 13:27:06,065 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=8&year=2013
+2026-10-21 13:27:07,236 | INFO | Tournament 18 of 150
+2026-10-21 13:27:07,244 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=9&year=2013
+2026-10-21 13:27:08,488 | INFO | Tournament 19 of 150
+2026-10-21 13:27:08,488 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=1&year=2014
+2026-10-21 13:27:09,583 | INFO | Tournament 20 of 150
+2026-10-21 13:27:09,583 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=2&year=2014
+2026-10-21 13:27:10,758 | INFO | Tournament 21 of 150
+2026-10-21 13:27:10,759 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=3&year=2014
+2026-10-21 13:27:11,940 | INFO | Tournament 22 of 150
+2026-10-21 13:27:11,941 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=4&year=2014
+2026-10-21 13:27:13,218 | INFO | Tournament 23 of 150
+2026-10-21 13:27:13,219 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=5&year=2014
+2026-10-21 13:27:14,415 | INFO | Tournament 24 of 150
+2026-10-21 13:27:14,415 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=6&year=2014
+2026-10-21 13:27:15,632 | INFO | Tournament 25 of 150
+2026-10-21 13:27:15,633 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=7&year=2014
+2026-10-21 13:27:16,863 | INFO | Tournament 26 of 150
+2026-10-21 13:27:16,863 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=9&year=2014
+2026-10-21 13:27:18,025 | INFO | Tournament 27 of 150
+2026-10-21 13:27:18,025 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=10&year=2014
+2026-10-21 13:27:19,115 | INFO | Tournament 28 of 150
+2026-10-21 13:27:19,115 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=1&year=2015
+2026-10-21 13:27:20,212 | INFO | Tournament 29 of 150
+2026-10-21 13:27:20,212 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=2&year=2015
+2026-10-21 13:27:21,387 | INFO | Tournament 30 of 150
+2026-10-21 13:27:21,387 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=3&year=2015
+2026-10-21 13:27:22,631 | INFO | Tournament 31 of 150
+2026-10-21 13:27:22,631 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=4&year=2015
+2026-10-21 13:27:23,802 | INFO | Tournament 32 of 150
+2026-10-21 13:27:23,802 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=5&year=2015
+2026-10-21 13:27:24,973 | INFO | Tournament 33 of 150
+2026-10-21 13:27:24,973 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=6&year=2015
+2026-10-21 13:27:26,142 | INFO | Tournament 34 of 150
+2026-10-21 13:27:26,142 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=7&year=2015
+2026-10-21 13:27:27,353 | INFO | Tournament 35 of 150
+2026-10-21 13:27:27,353 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=8&year=2015
+2026-10-21 13:27:28,528 | INFO | Tournament 36 of 150
+2026-10-21 13:27:28,528 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=9&year=2015
+2026-10-21 13:27:29,696 | INFO | Tournament 37 of 150
+2026-10-21 13:27:29,697 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=10&year=2015
+2026-10-21 13:27:30,832 | INFO | Tournament 38 of 150
+2026-10-21 13:27:30,832 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=1&year=2016
+2026-10-21 13:27:31,920 | INFO | Tournament 39 of 150
+2026-10-21 13:27:31,921 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=2&year=2016
+2026-10-21 13:27:33,126 | INFO | Tournament 40 of 150
+2026-10-21 13:27:33,126 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=3&year=2016
+2026-10-21 13:27:34,397 | INFO | Tournament 41 of 150
+2026-10-21 13:27:34,398 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=4&year=2016
+2026-10-21 13:27:35,611 | INFO | Tournament 42 of 150
+2026-10-21 13:27:35,611 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=5&year=2016
+2026-10-21 13:27:37,137 | INFO | Tournament 43 of 150
+2026-10-21 13:27:37,139 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=6&year=2016
+2026-10-21 13:27:38,726 | INFO | Tournament 44 of 150
+2026-10-21 13:27:38,736 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=7&year=2016
+2026-10-21 13:27:40,733 | INFO | Tournament 45 of 150
+2026-10-21 13:27:40,733 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=8&year=2016
+2026-10-21 13:27:42,091 | INFO | Tournament 46 of 150
+2026-10-21 13:27:42,091 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=9&year=2016
+2026-10-21 13:27:43,277 | INFO | Tournament 47 of 150
+2026-10-21 13:27:43,277 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=10&year=2016
+2026-10-21 13:27:44,458 | INFO | Tournament 48 of 150
+2026-10-21 13:27:44,458 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=11&year=2016
+2026-10-21 13:27:45,559 | INFO | Tournament 49 of 150
+2026-10-21 13:27:45,559 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=1&year=2017
+2026-10-21 13:27:46,758 | INFO | Tournament 50 of 150
+2026-10-21 13:27:46,758 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=2&year=2017
+2026-10-21 13:27:47,946 | INFO | Tournament 51 of 150
+2026-10-21 13:27:47,959 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=3&year=2017
+2026-10-21 13:27:49,051 | INFO | Tournament 52 of 150
+2026-10-21 13:27:49,051 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=4&year=2017
+2026-10-21 13:27:50,233 | INFO | Tournament 53 of 150
+2026-10-21 13:27:50,233 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=5&year=2017
+2026-10-21 13:27:51,473 | INFO | Tournament 54 of 150
+2026-10-21 13:27:51,473 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=6&year=2017
+2026-10-21 13:27:52,648 | INFO | Tournament 55 of 150
+2026-10-21 13:27:52,648 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=7&year=2017
+2026-10-21 13:27:53,884 | INFO | Tournament 56 of 150
+2026-10-21 13:27:53,884 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=8&year=2017
+2026-10-21 13:27:55,150 | INFO | Tournament 57 of 150
+2026-10-21 13:27:55,150 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=9&year=2017
+2026-10-21 13:27:56,315 | INFO | Tournament 58 of 150
+2026-10-21 13:27:56,315 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=10&year=2017
+2026-10-21 13:27:57,485 | INFO | Tournament 59 of 150
+2026-10-21 13:27:57,486 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=11&year=2017
+2026-10-21 13:27:58,576 | INFO | Tournament 60 of 150
+2026-10-21 13:27:58,582 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=1&year=2018
+2026-10-21 13:27:59,750 | INFO | Tournament 61 of 150
+2026-10-21 13:27:59,750 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=2&year=2018
+2026-10-21 13:28:00,889 | INFO | Tournament 62 of 150
+2026-10-21 13:28:00,890 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=3&year=2018
+2026-10-21 13:28:02,089 | INFO | Tournament 63 of 150
+2026-10-21 13:28:02,089 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=4&year=2018
+2026-10-21 13:28:03,334 | INFO | Tournament 64 of 150
+2026-10-21 13:28:03,334 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=5&year=2018
+2026-10-21 13:28:04,694 | INFO | Tournament 65 of 150
+2026-10-21 13:28:04,696 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=6&year=2018
+2026-10-21 13:28:05,956 | INFO | Tournament 66 of 150
+2026-10-21 13:28:05,956 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=7&year=2018
+2026-10-21 13:28:07,205 | INFO | Tournament 67 of 150
+2026-10-21 13:28:07,205 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=8&year=2018
+2026-10-21 13:28:08,409 | INFO | Tournament 68 of 150
+2026-10-21 13:28:08,409 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=9&year=2018
+2026-10-21 13:28:09,592 | INFO | Tournament 69 of 150
+2026-10-21 13:28:09,592 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=10&year=2018
+2026-10-21 13:28:10,697 | INFO | Tournament 70 of 150
+2026-10-21 13:28:10,697 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=1&year=2019
+2026-10-21 13:28:11,812 | INFO | Tournament 71 of 150
+2026-10-21 13:28:11,812 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=2&year=2019
+2026-10-21 13:28:12,959 | INFO | Tournament 72 of 150
+2026-10-21 13:28:12,959 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=3&year=2019
+2026-10-21 13:28:14,059 | INFO | Tournament 73 of 150
+2026-10-21 13:28:14,059 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=4&year=2019
+2026-10-21 13:28:15,193 | INFO | Tournament 74 of 150
+2026-10-21 13:28:15,193 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=5&year=2019
+2026-10-21 13:28:16,323 | INFO | Tournament 75 of 150
+2026-10-21 13:28:16,324 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=6&year=2019
+2026-10-21 13:28:17,457 | INFO | Tournament 76 of 150
+2026-10-21 13:28:17,458 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=7&year=2019
+2026-10-21 13:28:18,580 | INFO | Tournament 77 of 150
+2026-10-21 13:28:18,580 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=8&year=2019
+2026-10-21 13:28:19,768 | INFO | Tournament 78 of 150
+2026-10-21 13:28:19,769 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=9&year=2019
+2026-10-21 13:28:20,893 | INFO | Tournament 79 of 150
+2026-10-21 13:28:20,893 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=10&year=2019
+2026-10-21 13:28:22,012 | INFO | Tournament 80 of 150
+2026-10-21 13:28:22,012 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=11&year=2019
+2026-10-21 13:28:23,098 | INFO | Tournament 81 of 150
+2026-10-21 13:28:23,099 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=1&year=2020
+2026-10-21 13:28:24,244 | INFO | Tournament 82 of 150
+2026-10-21 13:28:24,244 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=2&year=2020
+2026-10-21 13:28:25,332 | INFO | Tournament 83 of 150
+2026-10-21 13:28:25,332 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=3&year=2020
+2026-10-21 13:28:26,471 | INFO | Tournament 84 of 150
+2026-10-21 13:28:26,471 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=4&year=2020
+2026-10-21 13:28:27,637 | INFO | Tournament 85 of 150
+2026-10-21 13:28:27,637 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=5&year=2020
+2026-10-21 13:28:28,770 | INFO | Tournament 86 of 150
+2026-10-21 13:28:28,770 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=6&year=2020
+2026-10-21 13:28:29,906 | INFO | Tournament 87 of 150
+2026-10-21 13:28:29,906 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=7&year=2020
+2026-10-21 13:28:31,040 | INFO | Tournament 88 of 150
+2026-10-21 13:28:31,041 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=8&year=2020
+2026-10-21 13:28:32,175 | INFO | Tournament 89 of 150
+2026-10-21 13:28:32,175 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=9&year=2020
+2026-10-21 13:28:33,311 | INFO | Tournament 90 of 150
+2026-10-21 13:28:33,311 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=10&year=2020
+2026-10-21 13:28:34,538 | INFO | Tournament 91 of 150
+2026-10-21 13:28:34,539 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=1&year=2021
+2026-10-21 13:28:35,637 | INFO | Tournament 92 of 150
+2026-10-21 13:28:35,637 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=2&year=2021
+2026-10-21 13:28:36,872 | INFO | Tournament 93 of 150
+2026-10-21 13:28:36,872 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=3&year=2021
+2026-10-21 13:28:37,962 | INFO | Tournament 94 of 150
+2026-10-21 13:28:37,963 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=4&year=2021
+2026-10-21 13:28:39,056 | INFO | Tournament 95 of 150
+2026-10-21 13:28:39,056 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=5&year=2021
+2026-10-21 13:28:40,219 | INFO | Tournament 96 of 150
+2026-10-21 13:28:40,219 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=6&year=2021
+2026-10-21 13:28:41,320 | INFO | Tournament 97 of 150
+2026-10-21 13:28:41,321 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=7&year=2021
+2026-10-21 13:28:42,407 | INFO | Tournament 98 of 150
+2026-10-21 13:28:42,408 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=8&year=2021
+2026-10-21 13:28:43,484 | INFO | Tournament 99 of 150
+2026-10-21 13:28:43,485 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=9&year=2021
+2026-10-21 13:28:44,586 | INFO | Tournament 100 of 150
+2026-10-21 13:28:44,588 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=10&year=2021
+2026-10-21 13:28:45,670 | INFO | Tournament 101 of 150
+2026-10-21 13:28:45,671 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=1&year=2022
+2026-10-21 13:28:46,763 | INFO | Tournament 102 of 150
+2026-10-21 13:28:46,763 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=2&year=2022
+2026-10-21 13:28:47,853 | INFO | Tournament 103 of 150
+2026-10-21 13:28:47,853 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=3&year=2022
+2026-10-21 13:28:48,934 | INFO | Tournament 104 of 150
+2026-10-21 13:28:48,934 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=4&year=2022
+2026-10-21 13:28:50,025 | INFO | Tournament 105 of 150
+2026-10-21 13:28:50,025 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=5&year=2022
+2026-10-21 13:28:51,116 | INFO | Tournament 106 of 150
+2026-10-21 13:28:51,116 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=6&year=2022
+2026-10-21 13:28:52,304 | INFO | Tournament 107 of 150
+2026-10-21 13:28:52,305 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=7&year=2022
+2026-10-21 13:28:53,393 | INFO | Tournament 108 of 150
+2026-10-21 13:28:53,394 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=8&year=2022
+2026-10-21 13:28:54,485 | INFO | Tournament 109 of 150
+2026-10-21 13:28:54,485 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=9&year=2022
+2026-10-21 13:28:55,575 | INFO | Tournament 110 of 150
+2026-10-21 13:28:55,576 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=10&year=2022
+2026-10-21 13:28:56,670 | INFO | Tournament 111 of 150
+2026-10-21 13:28:56,670 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=1&year=2023
+2026-10-21 13:28:57,772 | INFO | Tournament 112 of 150
+2026-10-21 13:28:57,773 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=2&year=2023
+2026-10-21 13:28:58,881 | INFO | Tournament 113 of 150
+2026-10-21 13:28:58,881 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=3&year=2023
+2026-10-21 13:28:59,962 | INFO | Tournament 114 of 150
+2026-10-21 13:28:59,962 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=4&year=2023
+2026-10-21 13:29:01,067 | INFO | Tournament 115 of 150
+2026-10-21 13:29:01,068 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=5&year=2023
+2026-10-21 13:29:02,250 | INFO | Tournament 116 of 150
+2026-10-21 13:29:02,250 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=6&year=2023
+2026-10-21 13:29:03,348 | INFO | Tournament 117 of 150
+2026-10-21 13:29:03,349 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=7&year=2023
+2026-10-21 13:29:04,444 | INFO | Tournament 118 of 150
+2026-10-21 13:29:04,444 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=8&year=2023
+2026-10-21 13:29:05,624 | INFO | Tournament 119 of 150
+2026-10-21 13:29:05,626 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=9&year=2023
+2026-10-21 13:29:06,727 | INFO | Tournament 120 of 150
+2026-10-21 13:29:06,727 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=10&year=2023
+2026-10-21 13:29:07,826 | INFO | Tournament 121 of 150
+2026-10-21 13:29:07,827 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=1&year=2024
+2026-10-21 13:29:08,945 | INFO | Tournament 122 of 150
+2026-10-21 13:29:08,945 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=2&year=2024
+2026-10-21 13:29:10,120 | INFO | Tournament 123 of 150
+2026-10-21 13:29:10,120 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=3&year=2024
+2026-10-21 13:29:11,201 | INFO | Tournament 124 of 150
+2026-10-21 13:29:11,201 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=4&year=2024
+2026-10-21 13:29:12,295 | INFO | Tournament 125 of 150
+2026-10-21 13:29:12,295 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=5&year=2024
+2026-10-21 13:29:13,387 | INFO | Tournament 126 of 150
+2026-10-21 13:29:13,388 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=6&year=2024
+2026-10-21 13:29:14,482 | INFO | Tournament 127 of 150
+2026-10-21 13:29:14,482 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=7&year=2024
+2026-10-21 13:29:15,576 | INFO | Tournament 128 of 150
+2026-10-21 13:29:15,576 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=8&year=2024
+2026-10-21 13:29:16,664 | INFO | Tournament 129 of 150
+2026-10-21 13:29:16,665 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=9&year=2024
+2026-10-21 13:29:17,762 | INFO | Tournament 130 of 150
+2026-10-21 13:29:17,762 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=10&year=2024
+2026-10-21 13:29:18,861 | INFO | Tournament 131 of 150
+2026-10-21 13:29:18,861 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=1&year=2025
+2026-10-21 13:29:19,962 | INFO | Tournament 132 of 150
+2026-10-21 13:29:19,962 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=2&year=2025
+2026-10-21 13:29:21,120 | INFO | Tournament 133 of 150
+2026-10-21 13:29:21,120 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=3&year=2025
+2026-10-21 13:29:22,195 | INFO | Tournament 134 of 150
+2026-10-21 13:29:22,196 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=4&year=2025
+2026-10-21 13:29:23,291 | INFO | Tournament 135 of 150
+2026-10-21 13:29:23,291 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=5&year=2025
+2026-10-21 13:29:24,388 | INFO | Tournament 136 of 150
+2026-10-21 13:29:24,388 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=6&year=2025
+2026-10-21 13:29:25,481 | INFO | Tournament 137 of 150
+2026-10-21 13:29:25,481 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=7&year=2025
+2026-10-21 13:29:26,581 | INFO | Tournament 138 of 150
+2026-10-21 13:29:26,581 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=8&year=2025
+2026-10-21 13:29:27,930 | INFO | Tournament 139 of 150
+2026-10-21 13:29:27,931 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=9&year=2025
+2026-10-21 13:29:29,030 | INFO | Tournament 140 of 150
+2026-10-21 13:29:29,030 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=10&year=2025
+2026-10-21 13:29:30,143 | INFO | Tournament 141 of 150
+2026-10-21 13:29:30,143 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=1&year=2026
+2026-10-21 13:29:31,235 | INFO | Tournament 142 of 150
+2026-10-21 13:29:31,236 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=2&year=2026
+2026-10-21 13:29:32,323 | INFO | Tournament 143 of 150
+2026-10-21 13:29:32,324 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=3&year=2026
+2026-10-21 13:29:33,409 | INFO | Tournament 144 of 150
+2026-10-21 13:29:33,409 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=4&year=2026
+2026-10-21 13:29:34,567 | INFO | Tournament 145 of 150
+2026-10-21 13:29:34,567 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=5&year=2026
+2026-10-21 13:29:35,669 | INFO | Tournament 146 of 150
+2026-10-21 13:29:35,669 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=6&year=2026
+2026-10-21 13:29:36,851 | INFO | Tournament 147 of 150
+2026-10-21 13:29:36,851 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=7&year=2026
+2026-10-21 13:29:37,953 | INFO | Tournament 148 of 150
+2026-10-21 13:29:37,954 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=8&year=2026
+2026-10-21 13:29:39,052 | INFO | Tournament 149 of 150
+2026-10-21 13:29:39,053 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=9&year=2026
+2026-10-21 13:29:40,140 | INFO | Tournament 150 of 150
+2026-10-21 13:29:40,141 | INFO | Processing tournament: https://bassmasterfantasy.com/TournamentDetails.aspx?periodId=10&year=2026
+2026-10-21 13:29:40,260 | INFO | Scrape audit saved to bassmaster_output/bassmaster_scrape_audit.csv
+2026-10-21 13:29:40,647 | INFO | Processing complete.
+2026-10-21 13:29:40,647 | INFO | Participant records: 13968
+2026-10-21 13:29:40,647 | INFO | Successful tournament pages: 150
+2026-10-21 13:29:40,647 | INFO | Other tournament outcomes: 0
+2026-10-21 13:29:40,647 | INFO | Output file: bassmaster_output/bassmaster_complete_participant_records.csv
+2026-10-21 13:29:40,647 | INFO | Dataset shape: (13968, 22)
