@@ -1,0 +1,154 @@
+> unique_events <- unique(bass[, c("Season_Year", "Event_Name", "Waterbody", "Location")])
+> print(unique_events, n = 150)
+# A tibble: 149 × 4
+    Season_Year Event_Name                                                                      Waterbody                         Location                           
+          <dbl> <chr>                                                                           <chr>                             <chr>                              
+  1        2012 Bassmaster Classic                                                              Red River (Shreveport, LA)        Red River (Shreveport, LA)         
+  2        2012 St. Johns River Showdown                                                        St. Johns River                   St. Johns River (Palatka, FL)      
+  3        2012 Power-Pole Slam                                                                 Lake Okeechobee                   Lake Okeechobee, FL                
+  4        2012 Trokar Quest Tournament                                                         Bull Shoals Lake, AR              Bull Shoals Lake, AR               
+  5        2012 Douglas Lake Challenge                                                          Douglas Lake                      Douglas Lake (Dandridge, TN)       
+  6        2012 Toledo Bend Battle                                                              Toledo Bend Reservoir             Many, LA                           
+  7        2012 Mississippi River Rumble                                                        Mississippi River                 Mississippi River (La Crosse, WI)  
+  8        2012 Green Bay Challenge                                                             Green Bay, WI                     Green Bay, WI                      
+  9        2012 Ramada Championship                                                             Oneida Lake                       Oneida Lake, NY                    
+ 10        2013 Bassmaster Classic                                                              Grand Lake                        Grand Lake o' the Cherokees, OK    
+ 11        2013 Sabine River Challenge                                                          Sabine River                      Sabine River System (Orange, TX)   
+ 12        2013 Falcon Slam                                                                     Falcon Lake (Zapata, TX)          Falcon Lake (Zapata, TX)           
+ 13        2013 Ramada Quest                                                                    Unknown                           Bull Shoals, AR                    
+ 14        2013 West Point Lake Battle                                                          West Point Lake (LaGrange, GA)    West Point Lake (LaGrange, GA)     
+ 15        2013 Alabama River Charge                                                            Alabama River (Montgomery, AL)    Alabama River (Montgomery, AL)     
+ 16        2013 Mississippi River Rumble                                                        Mississippi River                 Mississippi River (La Crosse, WI)  
+ 17        2013 St. Lawrence River Showdown                                                     St. Lawrence River                St. Lawrence River (Ogdensburg, NY)
+ 18        2013 Plano Championship Chase                                                        Unknown                           Detroit, MI                        
+ 19        2014 Bassmaster Classic                                                              Lake Guntersville                 Lake Guntersville (Birmingham, AL) 
+ 20        2014 Elite Series at Lake Seminole                                                   Bainbridge, GA                    Bainbridge, GA                     
+ 21        2014 Bassmaster Elite Series at St. Johns River                                      Unknown                           Palatka, FL                        
+ 22        2014 Elite Series at Table Rock Lake                                                 Branson, MO                       Branson, MO                        
+ 23        2014 Elite Series at Toledo Bend                                                     Toledo Bend Reservoir             Many, LA                           
+ 24        2014 Elite Series at Lake Dardanelle                                                 Russellville, AR                  Russellville, AR                   
+ 25        2014 Bassmaster BASSFest at Chickamauga Lake                                         Unknown                           Dayton, TN                         
+ 26        2014 Elite Series at Cayuga Lake                                                     Oneida Lake                       Union Springs, NY                  
+ 27        2014 Bassmaster Elite Series AOY Championship                                        Unknown                           Escanaba, MI                       
+ 28        2015 Bassmaster Classic                                                              Lake Hartwell                     Lake Hartwell, SC                  
+ 29        2015 Elite Series at Sabine River                                                    Sabine River                      Orange, TX                         
+ 30        2015 Diet Mtn Dew Elite at Guntersville                                              Lake Guntersville                 Guntersville, AL                   
+ 31        2015 Elite Series at Sacramento River                                                Sacramento, CA                    Sacramento, CA                     
+ 32        2015 Elite Series at Lake Havasu                                                     Lake Havasu City, AZ              Lake Havasu City, AZ               
+ 33        2015 Elite Series Tournament: Bassmaster BASSfest at Kentucky Lake                   Unknown                           Paris, TN                          
+ 34        2015 Elite Series at St. Lawrence River                                              St. Lawrence River                Waddington, NY                     
+ 35        2015 Elite Series at Chesapeake Bay                                                  Potomac River                     Cecil County, MD                   
+ 36        2015 Elite Series at Lake St. Clair                                                  Lake St. Clair                    Detroit, MI                        
+ 37        2015 Elite Series Tournament: Toyota Bassmaster AOY Championship                     Unknown                           Sturgeon Bay, WI                   
+ 38        2016 GEICO Bassmaster Classic                                                        Grand Lake                        Grand Lake O' the Cherokees, OK    
+ 39        2016 Elite Series at St. Johns River                                                 St. Johns River                   Palatka, FL                        
+ 40        2016 Elite Series at Winyah Bay                                                      Georgetown, SC                    Georgetown, SC                     
+ 41        2016 Elite Series at Bull Shoals / Norfork                                           Mountain Home, AR                 Mountain Home, AR                  
+ 42        2016 Elite Series at Wheeler Lake                                                    Wheeler Lake                      Decatur, AL                        
+ 43        2016 Elite Series at Toledo Bend                                                     Toledo Bend Reservoir             Many, LA                           
+ 44        2016 Bassmaster BASSfest                                                             Lake Texoma (Durant, OK)          Lake Texoma (Durant, OK)           
+ 45        2016 Elite Series at Cayuga Lake                                                     Oneida Lake                       Union Springs, NY                  
+ 46        2016 Elite Series at Potomac River                                                   Potomac River                     Charles County, MD                 
+ 47        2016 Mississippi River Elite                                                         Mississippi River                 La Crosse, WI                      
+ 48        2016 2016 Toyota Bassmaster Angler of the Year Championship                          Unknown                           Mille Lacs, MN                     
+ 49        2017 Elite Series at Lake Cherokee                                                   Douglas Lake                      Jefferson City, TN                 
+ 50        2017 2017 GEICO Bassmaster Classic                                                   Unknown                           Houston, TX                        
+ 51        2017 Bassmaster Elite at Toledo Bend                                                 Unknown                           Many, LA                           
+ 52        2017 Elite Series at Ross Barnett Reservoir                                          Ridgeland, MS                     Ridgeland, MS                      
+ 53        2017 Toyota Bassmaster Texas Fest                                                    Unknown                           Lufkin, TX                         
+ 54        2017 Elite Series at Lake Dardanelle                                                 Russellville, AR                  Russellville, AR                   
+ 55        2017 St. Lawrence River Elite                                                        St. Lawrence River                Waddington, NY                     
+ 56        2017 Lake Champlain Elite                                                            Lake Champlain                    Plattsburgh, NY                    
+ 57        2017 Bassmaster Elite at St. Clair                                                   Unknown                           Macomb County, MI                  
+ 58        2017 Toyota Bassmaster AOY Championship                                              Mille Lacs Lake, MN               Mille Lacs Lake, MN                
+ 59        2018 Elite Series at Lake Martin                                                     Lake Martin                       Alexander City, AL                 
+ 60        2018 GEICO Bassmaster Classic                                                        Lake Hartwell                     Lake Hartwell (Greenville, SC)     
+ 61        2018 Elite Series at Grand Lake                                                      Grove, OK                         Grove, OK                          
+ 62        2018 Berkley Bassmaster Elite at Kentucky Lake presented by Abu Garcia               Unknown                           Paris, TN                          
+ 63        2018 Toyota Bassmaster Texas Fest benefiting the Texas Parks and Wildlife Department Unknown                           Jonestown, TX                      
+ 64        2018 Sabine River Elite                                                              Sabine River                      Orange, TX                         
+ 65        2018 Mississippi River Elite                                                         Mississippi River                 La Crosse, WI                      
+ 66        2018 Lake Oahe Elite                                                                 Pierre, SD                        Pierre, SD                         
+ 67        2018 St. Lawrence River Elite                                                        St. Lawrence River                Waddington, NY                     
+ 68        2018 Toyota Bassmaster Angler of the Year                                            Lake Chatuge, GA                  Lake Chatuge, GA                   
+ 69        2019 Elite Series at St. Johns River                                                 St. Johns River                   Palatka, FL                        
+ 70        2019 Elite Series at Lake Lanier                                                     Gwinnett, GA                      Gwinnett, GA                       
+ 71        2019 Bassmaster Elite at Lake Hartwell                                               Lake Hartwell                     Anderson, SC                       
+ 72        2019 Elite Series at Lake Hartwell                                                   Lake Hartwell                     Anderson, SC                       
+ 73        2019 Elite Series at Winyah Bay                                                      Georgetown, SC                    Georgetown, SC                     
+ 74        2019 Bassmaster Elite at Lake Guntersville                                           Lake Guntersville                 Scottsboro, AL                     
+ 75        2019 Elite Series at Lake Guntersville                                               Lake Guntersville                 Scottsboro, AL                     
+ 76        2019 Elite Series at St. Lawrence River                                              St. Lawrence River                Waddington, NY                     
+ 77        2019 2019 Bassmaster Elite at Cayuga Lake                                            Unknown                           Union Springs, NY                  
+ 78        2019 2019 Bassmaster Elite at Lake Tenkiller                                         Unknown                           Cookson, OK                        
+ 79        2019 Toyota Bassmaster Angler of the Year Championship                               Unknown                           Detroit, MI                        
+ 80        2020 Bassmaster Elite at Lake Eufaula                                                Lake Eufaula                      Eufaula, AL                        
+ 81        2020 Bassmaster Elite at Mississippi River                                           Mississippi River                 La Crosse, WI                      
+ 82        2020 Elite Series at Lake Eufaula                                                    Lake Eufaula                      Eufaula, AL                        
+ 83        2020 Bassmaster Elite at Lake Champlain                                              Lake Champlain                    Plattsburgh, NY                    
+ 84        2020 Elite Series at Lake Champlain                                                  Lake Champlain                    Plattsburgh, NY                    
+ 85        2020 Elite Series at Lake St. Clair                                                  Lake St. Clair                    Macomb County, MI                  
+ 86        2020 Elite Series at Lake Guntersville                                               Lake Guntersville                 Scottsboro, AL                     
+ 87        2020 Elite Series at Santee Cooper Lakes                                             Santee Cooper                     Manning, SC                        
+ 88        2020 Elite Series at Chickamauga Lake                                                Lake Chickamauga                  Dayton, TN                         
+ 89        2020 2020 Toyota Bassmaster Texas Fest                                               Unknown                           Quitman, TX                        
+ 90        2021 Elite Series at St. Johns River                                                 St. Johns River                   Palatka, FL                        
+ 91        2021 Elite Series at Knoxville / Tennessee River                                     Tennessee River (Knoxville)       Knoxville, TN                      
+ 92        2021 Elite Series at Pickwick Lake                                                   Pickwick Lake                     Florence, AL                       
+ 93        2021 Elite Series at Sabine River                                                    Sabine River                      Orange, TX                         
+ 94        2021 Elite Series at Lake Fork                                                       Lake Fork                         Quitman, TX                        
+ 95        2021 Elite Series at Neely Henry Lake                                                Lake Guntersville                 Gadsden, AL                        
+ 96        2021 Elite Series at Lake Guntersville                                               Lake Guntersville                 Scottsboro, AL                     
+ 97        2021 2021 Academy Sports + Outdoors Bassmaster Classic presented by Huk              Unknown                           Fort Worth, TX                     
+ 98        2021 Elite Series at Lake Champlain                                                  Lake Champlain                    Burlington, VT                     
+ 99        2021 Elite Series at St. Lawrence River                                              St. Lawrence River                Waddington, NY                     
+100        2022 Elite Series at St. Johns River                                                 St. Johns River                   Palatka, FL                        
+101        2022 Elite Series at Harris Chain of Lakes                                           Leesburg, FL                      Leesburg, FL                       
+102        2022 Academy Sports + Outdoors Bassmaster Classic                                    Lake Hartwell                     Lake Hartwell (Greenville, SC)     
+103        2022 Elite Series at Santee Cooper Lakes                                             Santee Cooper                     Clarendon County, SC               
+104        2022 Elite Series at Chickamauga Lake                                                Lake Chickamauga                  Dayton, TN                         
+105        2022 Elite Series at Lake Fork                                                       Lake Fork                         Quitman, TX                        
+106        2022 Elite Series at Pickwick Lake                                                   Pickwick Lake                     Counce, TN                         
+107        2022 Elite Series at St. Lawrence River                                              St. Lawrence River                Clayton, NY                        
+108        2022 Elite Series at Lake Oahe                                                       Mobridge, SD                      Mobridge, SD                       
+109        2022 Elite Series at Mississippi River                                               Mississippi River                 La Crosse, WI                      
+110        2023 Elite Series at Lake Okeechobee                                                 Lake Okeechobee                   Okeechobee, FL                     
+111        2023 Elite Series at Lake Seminole                                                   Bainbridge, GA                    Bainbridge, GA                     
+112        2023 Bassmaster Classic                                                              Tennessee River (Knoxville)       Tennessee River, TN                
+113        2023 Elite Series at Lake Murray                                                     Lake Murray                       Columbia, SC                       
+114        2023 Elite Series at Santee Cooper Lakes                                             Santee Cooper                     Clarendon County, SC               
+115        2023 Elite Series at Lay Lake                                                        Shelby County, AL                 Shelby County, AL                  
+116        2023 Elite Series at Sabine River                                                    Sabine River                      Orange, TX                         
+117        2023 Elite Series at Lake St. Clair                                                  Lake St. Clair                    Macomb County, MI                  
+118        2023 Elite Series at Lake Champlain                                                  Lake Champlain                    Plattsburgh, NY                    
+119        2023 Elite Series at St. Lawrence River                                              St. Lawrence River                Clayton, NY                        
+120        2024 Elite Series at Toledo Bend Reservoir                                           Toledo Bend Reservoir             Many, LA                           
+121        2024 Elite Series at Lake Fork                                                       Lake Fork                         Yantis, TX                         
+122        2024 Bassmaster Classic                                                              Grand Lake                        Grand Lake o' the Cherokees, OK    
+123        2024 Elite Series at Harris Chain of Lakes                                           Leesburg, FL                      Leesburg, FL                       
+124        2024 Elite Series at St. Johns River                                                 St. Johns River                   Palatka, FL                        
+125        2024 Elite Series at Lake Murray                                                     Lake Murray                       Prosperity, SC                     
+126        2024 Elite Series at Wheeler Lake                                                    Wheeler Lake                      Decatur, AL                        
+127        2024 Elite Series at Smith Lake                                                      Lake Guntersville                 Cullman, AL                        
+128        2024 Elite Series at Lake Champlain                                                  Lake Champlain                    Plattsburgh, NY                    
+129        2024 Elite Series at St. Lawrence River                                              St. Lawrence River                Waddington, NY                     
+130        2025 Elite Series at St. Johns River                                                 St. Johns River                   Palatka, FL                        
+131        2025 Elite Series at Lake Okeechobee                                                 Lake Okeechobee                   Okeechobee, FL                     
+132        2025 Bass Pro Shops Bassmaster Classic                                               Lake Ray Roberts (Fort Worth, TX) Lake Ray Roberts (Fort Worth, TX)  
+133        2025 Elite Series at Pasquotank River                                                Elizabeth City, NC                Elizabeth City, NC                 
+134        2025 Elite Series at Lake Hartwell                                                   Lake Hartwell                     Anderson, SC                       
+135        2025 Elite Series at Lake Fork                                                       Lake Fork                         Yantis, TX                         
+136        2025 Bassmaster Elite at Sabine River                                                Sabine River                      Orange, TX                         
+137        2025 Elite Series at Lake Tenkiller                                                  Cookson, OK                       Cookson, OK                        
+138        2025 Elite Series at Lake St. Clair                                                  Lake St. Clair                    Macomb County, MI                  
+139        2025 Elite Series at Mississippi River                                               Mississippi River                 La Crosse, WI                      
+140        2026 Elite Series at Lake Guntersville                                               Lake Guntersville                 Scottsboro, AL                     
+141        2026 Elite Series at Lake Martin                                                     Lake Martin                       Alexander City, AL                 
+142        2026 Bass Pro Shops Bassmaster Classic                                               Tennessee River (Knoxville)       Tennessee River (Knoxville, TN)    
+143        2026 Elite Series at Tennessee-Tombigbee Waterway                                    Columbus, MS                      Columbus, MS                       
+144        2026 Elite Series at Arkansas River                                                  Muskogee, OK                      Muskogee, OK                       
+145        2026 Elite Series at Lake Murray                                                     Lake Murray                       Columbia, SC                       
+146        2026 Elite Series at Santee Cooper Lakes                                             Santee Cooper                     Clarendon County, SC               
+147        2026 Elite Series at Pasquotank River/Albemarle Sound                                Elizabeth City, NC                Elizabeth City, NC                 
+148        2026 Elite Series at Lake Champlain                                                  Lake Champlain                    Plattsburgh, NY                    
+149        2026 Elite Series at St. Lawrence River                                              St. Lawrence River                Clayton, NY         
