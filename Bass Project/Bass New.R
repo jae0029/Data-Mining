@@ -377,10 +377,99 @@ write_csv(
 unique_events <- unique(bass[, c("Season_Year", "Event_Name", "Waterbody", "Location")])
 print(unique_events, n = 150)
 
-bass_stand_loc <- read_csv(
-  "/Users/joshuaetherton/Library/CloudStorage/OneDrive-AuburnUniversity/Auburn/School/Grad_School/Current/Data Mining/Bass Project/clean_bassmaster_events.csv"
+unique_events <- bass %>%
+  distinct(
+    Season_Year,
+    Event_Name,
+    Waterbody,
+    Location
+  ) %>%
+  arrange(
+    Season_Year,
+    Event_Name
+  ) %>%
+  mutate(
+    Row_ID = row_number()
+  )
+print(unique_events, n = 150)
+
+bass <- bass %>%
+  left_join(
+    unique_events %>%
+      select(
+        Season_Year,
+        Event_Name,
+        Waterbody,
+        Location,
+        Row_ID
+      ),
+    by = c(
+      "Season_Year",
+      "Event_Name",
+      "Waterbody",
+      "Location"
+    )
+  )
+
+# sum(is.na(bass$Row_ID))
+# bass %>%
+#   select(
+#     Season_Year,
+#     Event_Name,
+#     Waterbody,
+#     Location,
+#     Row_ID
+#   ) %>%
+#   distinct() %>%
+#   arrange(Row_ID)
+
+
+write_csv(
+  unique_events,
+  "unique_events_with_ids.csv"
 )
 
+# 1. Read your new clean file (ensure the path matches where you saved it)
+clean_lookup <- read.csv("clean_bassmaster_events.csv", stringsAsFactors = FALSE)
+head(clean_lookup)
+head(bass)
+
+clean_lookup <- clean_lookup %>%
+  rename(
+    Clean_Event_Name = Event_Name,
+    Clean_Waterbody  = Waterbody,
+    Clean_Location   = Location
+  )
+
+bass <- bass %>%
+  left_join(
+    clean_lookup %>%
+      select(
+        Row_ID,
+        Clean_Event_Name,
+        Clean_Waterbody,
+        Clean_Location
+      ),
+    by = "Row_ID"
+  )
+
+# bass %>%
+#   filter(is.na(Clean_Event_Name)) %>%
+#   nrow()
+
+bass <- bass %>%
+  mutate(
+    Event_Name = Clean_Event_Name,
+    Waterbody  = Clean_Waterbody,
+    Location   = Clean_Location
+  ) %>%
+  select(
+    -Clean_Event_Name,
+    -Clean_Waterbody,
+    -Clean_Location
+  )
+
+#### Clean Event Name ####
 library(dplyr)
 library(stringr)
 
@@ -395,179 +484,26 @@ bass_clean <- bass %>%
     )
   )
 
-bass_stand_loc_clean <- bass_stand_loc %>%
-  mutate(
-    Event_Name = case_when(
-      str_detect(Event_Name, "(?i)Classic") ~ "Bassmaster Classic",
-      str_detect(Event_Name, "(?i)AOY|Angler of the Year") ~ "Angler of the Year Championship",
-      str_detect(Event_Name, "(?i)Elite|Showdown|Slam|Quest|Challenge|Battle|Rumble|Championship|Chase|Charge|BASSfest|Texas Fest|Festival") ~ "Elite Series",
-      TRUE ~ "Elite Series" # Fallback category for regular season events
-    )
-  )
+# unique(bass_clean$Waterbody)
+# unique(bass_clean$Locataion)
+# unique(bass_clean$Event_Name)
+# 
+# bass %>%
+#   select(
+#     Row_ID,
+#     Season_Year,
+#     Event_Name,
+#     Waterbody,
+#     Location
+#   ) %>%
+#   distinct() %>%
+#   arrange(Row_ID) %>%
+#   print(n = 20)
 
-library(dplyr)
-
-final_merged_bass <- bass_clean %>%
-  left_join(
-    bass_stand_loc_clean %>% 
-      distinct(Season_Year, Waterbody, Location, .keep_all = TRUE), 
-    by = c("Season_Year", "Waterbody", "Location")
-  )
-
-# Note: If your lookup table has different column names, map them explicitly:
-# by = c("Season_Year" = "Season_Year", "Waterbody" = "Clean_Waterbody")
-
-
-final_merged_bass <- bass_clean %>%
-  left_join(
-    bass_stand_loc_clean %>% 
-      distinct(Season_Year, Event_Name, Waterbody, Location, .keep_all = TRUE), 
-    by = c("Season_Year", "Event_Name", "Waterbody", "Location")
-  )
-
-
-library(dplyr)
-
-# 1. Create the explicit 149-row clean dataset to match unique_events row-for-row
-clean_149 <- tibble(
-  clean_Event_Name = c(
-    "Bassmaster Classic", "Elite Series", "Elite Series", "Elite Series", "Elite Series", 
-    "Elite Series", "Elite Series", "Elite Series", "Elite Series", "Bassmaster Classic", 
-    "Elite Series", "Elite Series", "Elite Series", "Elite Series", "Elite Series", 
-    "Elite Series", "Elite Series", "Elite Series", "Bassmaster Classic", "Elite Series", 
-    "Elite Series", "Elite Series", "Elite Series", "Elite Series", "Elite Series", 
-    "Elite Series", "Angler of the Year Championship", "Bassmaster Classic", "Elite Series", "Elite Series", 
-    "Elite Series", "Elite Series", "Elite Series", "Elite Series", "Elite Series", 
-    "Elite Series", "Angler of the Year Championship", "Bassmaster Classic", "Elite Series", "Elite Series", 
-    "Elite Series", "Elite Series", "Elite Series", "Elite Series", "Elite Series", 
-    "Elite Series", "Elite Series", "Angler of the Year Championship", "Elite Series", "Bassmaster Classic", 
-    "Elite Series", "Elite Series", "Elite Series", "Elite Series", "Elite Series", 
-    "Elite Series", "Elite Series", "Angler of the Year Championship", "Elite Series", "Bassmaster Classic", 
-    "Elite Series", "Elite Series", "Elite Series", "Elite Series", "Elite Series", 
-    "Elite Series", "Elite Series", "Angler of the Year Championship", "Elite Series", "Elite Series", 
-    "Elite Series", "Elite Series", "Elite Series", "Elite Series", "Elite Series", 
-    "Elite Series", "Elite Series", "Elite Series", "Angler of the Year Championship", "Elite Series", 
-    "Elite Series", "Elite Series", "Elite Series", "Elite Series", "Elite Series", 
-    "Elite Series", "Elite Series", "Elite Series", "Elite Series", "Elite Series", 
-    "Elite Series", "Elite Series", "Elite Series", "Elite Series", "Elite Series", 
-    "Elite Series", "Bassmaster Classic", "Elite Series", "Elite Series", "Elite Series", 
-    "Elite Series", "Bassmaster Classic", "Elite Series", "Elite Series", "Elite Series", 
-    "Elite Series", "Elite Series", "Elite Series", "Elite Series", "Elite Series", 
-    "Elite Series", "Bassmaster Classic", "Elite Series", "Elite Series", "Elite Series", 
-    "Elite Series", "Elite Series", "Elite Series", "Elite Series", "Elite Series", 
-    "Elite Series", "Bassmaster Classic", "Elite Series", "Elite Series", "Elite Series", 
-    "Elite Series", "Elite Series", "Elite Series", "Elite Series", "Elite Series", 
-    "Elite Series", "Bass Pro Shops Bassmaster Classic", "Elite Series", "Elite Series", "Elite Series", 
-    "Elite Series", "Elite Series", "Elite Series", "Elite Series", "Elite Series", 
-    "Elite Series", "Bass Pro Shops Bassmaster Classic", "Elite Series", "Elite Series", "Elite Series", 
-    "Elite Series", "Elite Series", "Elite Series", "Elite Series"
-  ),
-  clean_Waterbody = c(
-    "Red River", "St. Johns River", "Lake Okeechobee", "Bull Shoals Lake", "Douglas Lake", 
-    "Toledo Bend Reservoir", "Mississippi River", "Green Bay", "Oneida Lake", "Grand Lake", 
-    "Sabine River", "Falcon Lake", "Bull Shoals Lake", "West Point Lake", "Alabama River", 
-    "Mississippi River", "St. Lawrence River", "Lake St. Clair / Detroit River", "Lake Guntersville", "Lake Seminole", 
-    "St. Johns River", "Table Rock Lake", "Toledo Bend Reservoir", "Lake Dardanelle", "Chickamauga Lake", 
-    "Cayuga Lake", "Little Bay de Noc", "Lake Hartwell", "Sabine River", "Lake Guntersville", 
-    "Sacramento River", "Lake Havasu", "Kentucky Lake", "St. Lawrence River", "Chesapeake Bay / Potomac River", 
-    "Lake St. Clair", "Green Bay", "Grand Lake", "St. Johns River", "Winyah Bay", 
-    "Bull Shoals Lake / Norfork Lake", "Wheeler Lake", "Toledo Bend Reservoir", "Lake Texoma", "Cayuga Lake", 
-    "Potomac River", "Mississippi River", "Mille Lacs Lake", "Cherokee Lake", "Lake Conroe", 
-    "Toledo Bend Reservoir", "Ross Barnett Reservoir", "Sam Rayburn Reservoir", "Lake Dardanelle", "St. Lawrence River", 
-    "Lake Champlain", "Lake St. Clair", "Mille Lacs Lake", "Lake Martin", "Lake Hartwell", 
-    "Grand Lake", "Kentucky Lake", "Lake Travis", "Sabine River", "Mississippi River", 
-    "Lake Oahe", "St. Lawrence River", "Lake Chatuge", "St. Johns River", "Lake Lanier", 
-    "Lake Hartwell", "Lake Hartwell", "Winyah Bay", "Lake Guntersville", "Lake Guntersville", 
-    "St. Lawrence River", "Cayuga Lake", "Lake Tenkiller", "Lake St. Clair", "Lake Eufaula", 
-    "Mississippi River", "Lake Eufaula", "Lake Champlain", "Lake Champlain", "Lake St. Clair", 
-    "Lake Guntersville", "Santee Cooper Lakes", "Chickamauga Lake", "Lake Fork", "St. Johns River", 
-    "Tennessee River", "Pickwick Lake", "Sabine River", "Lake Fork", "Neely Henry Lake", 
-    "Lake Guntersville", "Lake Ray Roberts", "Lake Champlain", "St. Lawrence River", "St. Johns River", 
-    "Harris Chain of Lakes", "Lake Hartwell", "Santee Cooper Lakes", "Chickamauga Lake", "Lake Fork", 
-    "Pickwick Lake", "St. Lawrence River", "Lake Oahe", "Mississippi River", "Lake Okeechobee", 
-    "Lake Seminole", "Tennessee River", "Lake Murray", "Santee Cooper Lakes", "Lay Lake", 
-    "Sabine River", "Lake St. Clair", "Lake Champlain", "St. Lawrence River", "Toledo Bend Reservoir", 
-    "Lake Fork", "Grand Lake", "Harris Chain of Lakes", "St. Johns River", "Lake Murray", 
-    "Wheeler Lake", "Smith Lake", "Lake Champlain", "St. Lawrence River", "St. Johns River", 
-    "Lake Okeechobee", "Lake Ray Roberts", "Pasquotank River", "Lake Hartwell", "Lake Fork", 
-    "Sabine River", "Lake Tenkiller", "Lake St. Clair", "Mississippi River", "Lake Guntersville", 
-    "Lake Martin", "Tennessee River", "Tennessee-Tombigbee Waterway", "Arkansas River", "Lake Murray", 
-    "Santee Cooper Lakes", "Pasquotank River / Albemarle Sound", "Lake Champlain", "St. Lawrence River"
-  ),
-  clean_Location = c(
-    "Shreveport, LA", "Palatka, FL", "Okeechobee, FL", "Bull Shoals, AR", "Dandridge, TN", 
-    "Many, LA", "La Crosse, WI", "Green Bay, WI", "Oneida Lake, NY", "Grove, OK", 
-    "Orange, TX", "Zapata, TX", "Bull Shoals, AR", "LaGrange, GA", "Montgomery, AL", 
-    "La Crosse, WI", "Ogdensburg, NY", "Detroit, MI", "Birmingham, AL", "Bainbridge, GA", 
-    "Palatka, FL", "Branson, MO", "Many, LA", "Russellville, AR", "Dayton, TN", 
-    "Union Springs, NY", "Escanaba, MI", "Greenville, SC", "Orange, TX", "Guntersville, AL", 
-    "Sacramento, CA", "Lake Havasu City, AZ", "Paris, TN", "Waddington, NY", "Cecil County, MD", 
-    "Detroit, MI", "Sturgeon Bay, WI", "Grove, OK", "Palatka, FL", "Georgetown, SC", 
-    "Mountain Home, AR", "Decatur, AL", "Many, LA", "Durant, OK", "Union Springs, NY", 
-    "Charles County, MD", "La Crosse, WI", "Mille Lacs, MN", "Jefferson City, TN", "Houston, TX", 
-    "Many, LA", "Ridgeland, MS", "Lufkin, TX", "Russellville, AR", "Waddington, NY", 
-    "Plattsburgh, NY", "Macomb County, MI", "Mille Lacs Lake, MN", "Alexander City, AL", "Greenville, SC", 
-    "Grove, OK", "Paris, TN", "Jonestown, TX", "Orange, TX", "La Crosse, WI", 
-    "Pierre, SD", "Waddington, NY", "Lake Chatuge, GA", "Palatka, FL", "Gwinnett, GA", 
-    "Anderson, SC", "Anderson, SC", "Georgetown, SC", "Scottsboro, AL", "Scottsboro, AL", 
-    "Waddington, NY", "Union Springs, NY", "Cookson, OK", "Detroit, MI", "Eufaula, AL", 
-    "La Crosse, WI", "Eufaula, AL", "Plattsburgh, NY", "Plattsburgh, NY", "Macomb County, MI", 
-    "Scottsboro, AL", "Manning, SC", "Dayton, TN", "Quitman, TX", "Palatka, FL", 
-    "Knoxville, TN", "Florence, AL", "Orange, TX", "Quitman, TX", "Gadsden, AL", 
-    "Scottsboro, AL", "Fort Worth, TX", "Burlington, VT", "Waddington, NY", "Palatka, FL", 
-    "Leesburg, FL", "Greenville, SC", "Clarendon County, SC", "Dayton, TN", "Quitman, TX", 
-    "Counce, TN", "Clayton, NY", "Mobridge, SD", "La Crosse, WI", "Okeechobee, FL", 
-    "Bainbridge, GA", "Knoxville, TN", "Columbia, SC", "Clarendon County, SC", "Shelby County, AL", 
-    "Orange, TX", "Macomb County, MI", "Plattsburgh, NY", "Clayton, NY", "Many, LA", 
-    "Yantis, TX", "Grove, OK", "Leesburg, FL", "Palatka, FL", "Prosperity, SC", 
-    "Decatur, AL", "Cullman, AL", "Plattsburgh, NY", "Waddington, NY", "Palatka, FL", 
-    "Okeechobee, FL", "Fort Worth, TX", "Elizabeth City, NC", "Anderson, SC", "Yantis, TX", 
-    "Orange, TX", "Cookson, OK", "Macomb County, MI", "La Crosse, WI", "Scottsboro, AL", 
-    "Alexander City, AL", "Knoxville, TN", "Columbus, MS", "Muskogee, OK", "Columbia, SC", 
-    "Clarendon County, SC", "Elizabeth City, NC", "Plattsburgh, NY", "Clayton, NY"
-  )
+write_csv(
+  bass_clean,
+  "bass_final_cleaned.csv"
 )
-
-# 2. Build the lookup map directly alongside the messy entries
-lookup_table <- unique_events %>%
-  distinct(Season_Year, Event_Name, Waterbody, Location) %>%
-  rename(
-    old_Event_Name = Event_Name,
-    old_Waterbody = Waterbody,
-    old_Location = Location
-  ) %>%
-  bind_cols(clean_149)
-
-# 3. Merge the clean fields into your deep dataset using original keys
-final_merged_bass <- bass_clean %>%
-  left_join(
-    lookup_table, 
-    by = c(
-      "Season_Year" = "Season_Year", 
-      "Event_Name" = "old_Event_Name", 
-      "Waterbody" = "old_Waterbody", 
-      "Location" = "old_Location"
-    )
-  ) %>%
-  # 4. Overwrite original columns with the clean mapped values
-  mutate(
-    Event_Name = clean_Event_Name,
-    Waterbody = clean_Waterbody,
-    Location = clean_Location
-  ) %>%
-  # 5. Clean up temporary reference helper columns
-  select(-clean_Event_Name, -clean_Waterbody, -clean_Location)
-
-
-
-
-
-
-
-
-
-
-
 
 
 
