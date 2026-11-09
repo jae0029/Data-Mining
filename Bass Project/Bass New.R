@@ -352,10 +352,10 @@ if ("Tournament_Dates.x" %in% colnames(bass)) {
     rename(Tournament_Dates = Tournament_Dates.x)
 }
 
-write_csv(
-  bass,
-  "bass_final_cleaned.csv"
-)
+# write_csv(
+#   bass,
+#   "bass_final_cleaned.csv"
+# )
 
 
 # tournament_dates <- unique(bass$Tournament_Dates)
@@ -505,10 +505,198 @@ write_csv(
   "bass_final_cleaned.csv"
 )
 
+library(dplyr)
+
+bass_with_limits <- bass_clean %>%
+  
+  # ---------------------------------------------------------
+# 1. Create a unique tournament identifier
+# Tournament_ID repeats across seasons.
+# ---------------------------------------------------------
+mutate(
+  Event_Key = paste(
+    Season_Year,
+    Tournament_ID,
+    sep = "_"
+  )
+) %>%
+  
+  # ---------------------------------------------------------
+# 2. Estimate the total completed event days
+# using the winner's cumulative fish count.
+# ---------------------------------------------------------
+group_by(Event_Key) %>%
+  
+  mutate(
+    winner_fish_caught = Fish_Caught[
+      which.min(Place)
+    ][1],
+    
+    event_days = case_when(
+      is.na(winner_fish_caught)      ~ NA_real_,
+      winner_fish_caught <= 5        ~ 1,
+      winner_fish_caught <= 10       ~ 2,
+      winner_fish_caught <= 15       ~ 3,
+      winner_fish_caught <= 20       ~ 4,
+      TRUE                           ~ NA_real_
+    ),
+    
+    event_bag_limit = event_days * 5
+  ) %>%
+  
+  ungroup() %>%
+  
+  # ---------------------------------------------------------
+# 3. Assign days from documented event-format rules
+# ---------------------------------------------------------
+mutate(
+  rule_based_days = case_when(
+    
+    # Bassmaster Classic:
+    # the full field fishes every completed event day.
+    Event_Name == "Bassmaster Classic" ~ event_days,
+    
+    # Angler of the Year Championship:
+    # the full field fishes every completed event day.
+    Event_Name == "Angler of the Year Championship" ~ event_days,
+    
+    # Shortened Elite Series event:
+    # everyone fishes all available days.
+    Event_Name == "Elite Series" &
+      event_days <= 2 ~ event_days,
+    
+    # Three-day Elite Series event:
+    # Top 50, plus possible ties, advance to Day 3.
+    Event_Name == "Elite Series" &
+      event_days == 3 &
+      Place <= 50 ~ 3,
+    
+    Event_Name == "Elite Series" &
+      event_days == 3 &
+      Place > 50 ~ 2,
+    
+    # Four-day Elite Series through 2019:
+    # Top 50, plus ties, reach Day 3.
+    # Top 12 reach Day 4.
+    Event_Name == "Elite Series" &
+      event_days == 4 &
+      Season_Year <= 2019 &
+      Place <= 12 ~ 4,
+    
+    Event_Name == "Elite Series" &
+      event_days == 4 &
+      Season_Year <= 2019 &
+      Place <= 50 ~ 3,
+    
+    Event_Name == "Elite Series" &
+      event_days == 4 &
+      Season_Year <= 2019 &
+      Place > 50 ~ 2,
+    
+    # Four-day Elite Series beginning in 2020:
+    # Top 50, plus ties, reach Day 3.
+    # Top 10 reach Day 4.
+    Event_Name == "Elite Series" &
+      event_days == 4 &
+      Season_Year >= 2020 &
+      Place <= 10 ~ 4,
+    
+    Event_Name == "Elite Series" &
+      event_days == 4 &
+      Season_Year >= 2020 &
+      Place <= 50 ~ 3,
+    
+    Event_Name == "Elite Series" &
+      event_days == 4 &
+      Season_Year >= 2020 &
+      Place > 50 ~ 2,
+    
+    # Unrecognized format
+    TRUE ~ NA_real_
+  ),
+  
+  # -------------------------------------------------------
+  # 4. Determine the minimum possible days from fish caught
+  #
+  # More than 10 fish requires at least 3 days.
+  # More than 15 fish requires 4 days.
+  # -------------------------------------------------------
+  minimum_days_from_fish = case_when(
+    is.na(Fish_Caught) ~ NA_real_,
+    Fish_Caught <= 5   ~ 1,
+    Fish_Caught <= 10  ~ 2,
+    Fish_Caught <= 15  ~ 3,
+    Fish_Caught <= 20  ~ 4,
+    TRUE               ~ NA_real_
+  ),
+  
+  # Use the larger of the documented-rule assignment and
+  # the minimum number of days required by the observed catch.
+  initial_days_fished = pmax(
+    rule_based_days,
+    minimum_days_from_fish,
+    na.rm = FALSE
+  )
+) %>%
+  
+  # ---------------------------------------------------------
+# 5. Enforce ranking consistency within each tournament
+#
+# If 52nd place demonstrably fished Day 3, then all anglers
+# finishing above 52nd are assigned at least 3 days.
+# This accommodates ties at advancement cuts.
+# ---------------------------------------------------------
+group_by(Event_Key) %>%
+  
+  arrange(
+    Place,
+    .by_group = TRUE
+  ) %>%
+  
+  mutate(
+    days_fished = rev(
+      cummax(
+        rev(initial_days_fished)
+      )
+    ),
+    
+    # An angler cannot fish more days than the completed event.
+    days_fished = pmin(
+      days_fished,
+      event_days
+    ),
+    
+    # Five-fish daily limit
+    bag_limit = days_fished * 5,
+    
+    proportion_bag_limit = if_else(
+      !is.na(bag_limit) &
+        bag_limit > 0,
+      Fish_Caught / bag_limit,
+      NA_real_
+    ),
+    
+    percent_bag_limit = (
+      proportion_bag_limit * 100
+    ),
+    
+    reached_bag_limit = case_when(
+      is.na(Fish_Caught) |
+        is.na(bag_limit) ~ NA,
+      
+      Fish_Caught == bag_limit ~ TRUE,
+      
+      TRUE ~ FALSE
+    )
+  ) %>%
+  
+  ungroup()
 
 
-
-
+write_csv(
+  bass_with_limits,
+  "bass_with_limits.csv"
+)
 
 
 
