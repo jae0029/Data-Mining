@@ -1,10 +1,10 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.3.22)  22 SEP 2026 10:21
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.3.22)  10 NOV 2026 12:51
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
  %&-line parsing enabled.
-**"/Users/joshuaetherton/Library/CloudStorage/OneDrive-AuburnUniversity/Auburn/School/Grad_School/Current/Data Mining/Test 1 Notes Sheet.tex"
-(/Users/joshuaetherton/Library/CloudStorage/OneDrive-AuburnUniversity/Auburn/School/Grad_School/Current/Data Mining/Test 1 Notes Sheet.tex
+**"/Users/joshuaetherton/Library/CloudStorage/OneDrive-AuburnUniversity/Auburn/School/Grad_School/Current/Data Mining/Test 1/Test 1 Notes Sheet.tex"
+(/Users/joshuaetherton/Library/CloudStorage/OneDrive-AuburnUniversity/Auburn/School/Grad_School/Current/Data Mining/Test 1/Test 1 Notes Sheet.tex
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
 (/usr/local/texlive/2026/texmf-dist/tex/latex/base/article.cls
@@ -538,12 +538,12 @@ L3 programming layer <2026-01-19>
  ) 
 Here is how much of TeX's memory you used:
  7996 strings out of 467525
- 127592 string characters out of 5418982
+ 127613 string characters out of 5418982
  630103 words of memory out of 5000000
  36715 multiletter control sequences out of 15000+600000
  656274 words of font info for 103 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 57i,11n,65p,1132b,493s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 57i,11n,65p,1139b,493s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2026/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/public/lm/lmbx7.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/public/lm/lmex10.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/public/lm/lmmi5.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/public/lm/lmmi7.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/public/lm/lmr10.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/public/lm/lmr5.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/public/lm/lmr7.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/public/lm/lmsy5.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/public/lm/lmsy7.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/public/lm/lmtt8.pfb>
 Output written on "Test 1 Notes Sheet.pdf" (1 page, 397228 bytes).
 PDF statistics:

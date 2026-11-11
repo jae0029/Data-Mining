@@ -1,0 +1,1320 @@
+Homework 3a: Clustering, Purpose, and Evidence
+One of the main arguments in Clustering: Science or Art? is that there is no universal way to decide whether a clustering result is good or bad. Instead, the quality of a clustering depends on why the data are being clustered in the first place. I agree with this argument because clustering is often used to support a larger goal, and different goals can require very different groupings of the same data.
+This idea ties in with a theme that has come up repeatedly in this course. Finding a pattern in data does not automatically mean we have learned something useful. Whether we are looking at neighbors, visualizations, or clusters, we still have to ask what the results represent and whether they help answer a meaningful question. The paper argues that many clustering researchers focus too heavily on algorithm performance while ignoring the actual reason someone wants to cluster the data. I think that criticism is fair. It is easy to get caught up in metrics and forget that the end goal is to support decision-making or generate knowledge.
+I also found the discussion about benchmark datasets convincing. The authors point out that researchers often compare clustering results with existing class labels and assume that better agreement means better clustering. However, a dataset can contain multiple meaningful structures at the same time. Their example of clustering images by color instead of object type shows that a clustering can be reasonable even when it does not match the labels. That stood out to me because it highlights how much our expectations influence what we consider a "good" result.
+That said, I think the paper may go a little too far in downplaying general evaluation measures. I agree that metrics such as cohesion, separation, or stability cannot tell us whether a clustering is useful for every possible application. However, they can still provide valuable evidence. If a clustering changes dramatically whenever the data are slightly modified, I would be hesitant to trust it, especially in a research setting. Even if these metrics cannot tell us the whole story, they can help identify results that may not be reliable enough to support conclusions.
+My experience in engineering research also makes me lean toward the authors' perspective. In many cases, the most useful analysis is not the one with the best mathematical score but the one that helps explain a real-world problem. For example, when analyzing biological or environmental data, a grouping that helps explain a process or suggests a new hypothesis can be more valuable than one that simply optimizes an objective function.
+Overall, I agree with the authors that clustering should be evaluated in the context of its intended use rather than against a universal standard. At the same time, I think general quality measures still have an important role as supporting evidence. Just like with many things in life, the strongest approach is probably to incorporate both ideologies: evaluate whether the clustering is technically sound while also asking whether it actually helps answer the question that motivated the analysis in the first place.
+
+
+
+
+
+Homework 3B: Clustering Wholesale Customers
+A wholesale distributor wants purchasing profiles that could help its account managers prepare for customer reviews. Compare K-means, hierarchical clustering, DBSCAN, and Gaussian mixtures on the same annual spending records. Some groupings may suggest clear purchasing profiles; others may be harder to use.
+
+Data preparation and display helpers are supplied. Adapt the lecture examples to fit the models and display their results. Complete the modeling work and answer two questions in each section. Use spending values and customer counts to support your interpretations.
+
+References: Lectures 07a (K-means), 07b (hierarchical clustering), and 08a (density and mixture clustering). Use these examples to complete the code tasks below.
+
+Setup
+Customers and Spending Data
+The data are real annual spending records for 440 clients of a wholesale distributor. Each row is one client, with spending on fresh products, milk, groceries, frozen products, detergents/paper, and delicatessen products. The source reports monetary units (m.u.), without identifying a currency or observation year. The account-review scenario is proposed for this exercise.
+
+Source: Cardoso, M. (2013), Wholesale customers, UCI Machine Learning Repository, CC BY 4.0. This is the source introduced in 01b. The prepared file retains all 440 rows and their six spending values. It excludes the recorded Channel and Region categories. customer_id is a row label, not a feature.
+
+Describe groups by their observed purchases; business types and reasons for buying are not established by these records.
+
+import pandas as pd
+import numpy as np
+import sklearn
+import scipy
+import matplotlib.pyplot as plt
+
+print("Kernel working!")
+Kernel working!
+from pathlib import Path
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+from IPython.display import display
+from scipy.cluster.hierarchy import cut_tree, linkage  # noqa: F401 - cut_tree is used in task 2
+from sklearn.cluster import DBSCAN, KMeans  # noqa: F401 - used in student tasks
+from sklearn.mixture import GaussianMixture  # noqa: F401 - used in student task 4
+from sklearn.preprocessing import StandardScaler
+
+DATA_URL = (
+    "https://raw.githubusercontent.com/olearydj/INSY7130/"
+    "main/homework/hw3b/data/wholesale-spending.csv"
+)
+local_paths = [
+    Path("data/wholesale-spending.csv"),
+    Path("content/homework/hw3b/data/wholesale-spending.csv"),
+]
+data_path = next((path for path in local_paths if path.is_file()), DATA_URL)
+customers = pd.read_csv(data_path).set_index("customer_id")
+FEATURES = ["Fresh", "Milk", "Grocery", "Frozen", "Detergents_Paper", "Delicassen"]
+print("Customers and spending features:", customers[FEATURES].shape)
+display(customers.head())
+Customers and spending features: (440, 6)
+Fresh	Milk	Grocery	Frozen	Detergents_Paper	Delicassen
+customer_id						
+1	12669	9656	7561	214	2674	1338
+2	7057	9810	9568	1762	3293	1776
+3	6353	8808	7684	2405	3516	7844
+4	13265	1196	4221	6404	507	1788
+5	22615	5410	7198	3915	1777	5185
+Preparing the Clustering Features
+Previous analysis has revealed that a few clients spend much more than most others. The supplied setup applies log(1 + spending) to compress large absolute gaps, then standardizes each transformed category. Without this transformation, a few very large purchases could dominate the clustering. The log1p transform preserves differences across all six spending categories, but customers who spend more overall can still group differently from customers who spend less, even if they divide their spending among the categories in similar ways.
+
+Every method in this assignment should receive the same matrix X. Median values are presented in original monetary units, so you can describe customers without interpreting standardized logarithms.
+
+logged_spending = np.log1p(customers[FEATURES])
+scaler = StandardScaler()
+X = scaler.fit_transform(logged_spending)
+print("Fitting matrix:", X.shape)
+display(customers[FEATURES].median().round(1).to_frame("All-customer median (m.u.)"))
+Fitting matrix: (440, 6)
+All-customer median (m.u.)
+Fresh	8504.0
+Milk	3627.0
+Grocery	4755.5
+Frozen	1526.0
+Detergents_Paper	816.5
+Delicassen	965.5
+Helper Functions
+The functions below summarize and display results. show_groups(labels, title) takes a set of cluster labels and a title, prints customer counts and category medians, then plots Fresh against Grocery spending on logarithmic axes. Since only two categories are visualized, this is an incomplete picture of customer closeness. Note that spending_profile is called by show_groups, and need not be called separately.
+
+Group numbers and colors are not shared across fits. For DBSCAN, the row labeled Noise summarizes unassigned customers for bookkeeping; those customers are not an additional discovered group.
+
+def spending_profile(labels):
+    """Return customer counts and median spending for each assigned group.
+
+    Supply one label per customer, in the same row order as `customers`.
+    The table uses the six original spending columns in monetary units,
+    not the transformed values in `X`. DBSCAN label -1 appears as "Noise".
+    """
+    grouped = customers.assign(group=labels).groupby("group")
+    table = grouped[FEATURES].median()
+    table.insert(0, "Customers", grouped.size())
+    return table.rename(index={-1: "Noise"})
+
+
+def show_groups(labels, title):
+    """Display a spending summary and a Fresh-versus-Grocery plot.
+
+    Supply one label per customer in row order and a title for the display.
+    The table shows group sizes and median spending in all six categories.
+    The plot shows only Fresh and Grocery on logarithmic axes, so it cannot
+    show every difference used in clustering. Gray crosses mark DBSCAN noise.
+    """
+    if labels is None:
+        print("No labels exist.", title)
+        return
+    print(title, ": category medians in original monetary units")
+    display(spending_profile(labels).round(1))
+    fig, ax = plt.subplots(figsize=(7, 4.5), layout="constrained")
+    palette = plt.get_cmap("tab10")
+    for group in np.unique(labels):
+        rows = customers.loc[labels == group]
+        ax.scatter(
+            rows["Fresh"], rows["Grocery"], s=18, alpha=0.65,
+            color="0.55" if group == -1 else palette(int(group)),
+            marker="x" if group == -1 else "o",
+            label="Noise" if group == -1 else f"Group {group}",
+        )
+    ax.set(
+        xscale="log", yscale="log", xlim=(2, 150_000), ylim=(2, 150_000),
+        xlabel="Fresh spending (m.u.; log axis)",
+        ylabel="Grocery spending (m.u.; log axis)", title=title,
+    )
+    ax.legend(fontsize=8)
+    plt.show()
+
+
+def density_summary(labels):
+    """Return the number of DBSCAN groups, assigned customers, and noise customers.
+
+    Supply the fitted DBSCAN labels, one per customer. Label -1 means noise
+    and is excluded from the group count. The two customer counts describe
+    how many records received a group assignment and how many did not.
+    """
+    return {
+        "Groups (excluding noise)": len(set(labels) - {-1}),
+        "Customers in groups": int(np.sum(labels != -1)),
+        "Noise customers": int(np.sum(labels == -1)),
+    }
+1. K-Means: Purchasing Profiles Around Centers
+Create a K-means model named kmeans with three clusters, 20 initializations, and random_state=7130, then fit it to X. Assign the resulting labels to kmeans_labels. Use show_groups to display the results.
+
+kmeans = None
+kmeans_labels = None
+# Create and fit K-means, then retrieve its labels.
+kmeans = KMeans(
+    n_clusters=3,
+    n_init=20,
+    random_state=7130
+)
+
+kmeans.fit(X)
+kmeans_labels = kmeans.labels_
+# Display the K-means result.
+show_groups(kmeans_labels, "K-means (3 clusters)")
+K-means (3 clusters) : category medians in original monetary units
+Customers	Fresh	Milk	Grocery	Frozen	Detergents_Paper	Delicassen
+group							
+0	81	1454.0	6264.0	10487.0	388.0	4196.0	436.0
+1	212	9635.0	1598.5	2151.0	2151.0	274.5	686.0
+2	147	12126.0	7184.0	9965.0	2005.0	3378.0	2005.0
+
+Question 1a: Describe two contrasting purchasing profiles in the K-means result. Give each a short descriptive name and support each with two category medians. What might an account manager be able to learn from one of these groups?
+
+One purchasing profile is "Grocery and Household Supplies Buyers" (Group 0). This group contains 81 customers and has high median spending on Grocery (10,487 m.u.) and Detergents_Paper (4,196 m.u.), while Fresh spending is relatively low at 1,454 m.u.
+
+A contrasting profile is "Fresh-Focused Buyers" (Group 1). This group contains 212 customers and has much higher median Fresh spending (9,635 m.u.) but lower Grocery spending (2,151 m.u.) and Detergents_Paper spending (274.5 m.u.).
+
+An account manager could learn that customers in Group 0 appear to rely heavily on grocery and household-supply products. Reviews for these customers could focus on inventory replenishment, bulk purchasing needs, and opportunities to expand related product categories.
+
+Question 1b: Why do the K-means groups appear to overlap in the Fresh-versus-Grocery plot even though the model assigns each customer to one group?
+
+The K-means groups appear to overlap in the Fresh-versus-Grocery plot because the clustering model used all six spending categories, not just Fresh and Grocery. Customers that look similar on the two plotted variables may differ substantially in Milk, Frozen, Detergents_Paper, or Delicassen spending. K-means assigns every customer to the nearest cluster center in the full six-dimensional feature space, so overlap in a two-dimensional plot does not mean the customers are close when all six spending categories are considered.
+
+2. Hierarchical Clustering: A Different Three-Group Summary
+Perform agglomerative clustering on X using linkage with the complete method and Euclidean distance, naming the result customer_tree. Then use cut_tree to assign labels for three clusters and name the result hierarchical_labels. Use .ravel() to flatten the one-column array returned by cut_tree into a one-dimensional array of labels.
+
+Use show_groups to display the results. Then run the provided code to show a truncated dendrogram, starting with 24 leaves (p=24). Its default colors need not match the three-group cut.
+
+customer_tree = None
+hierarchical_labels = None
+# Build the complete-linkage tree and extract three-group labels.
+customer_tree = linkage(
+    X,
+    method="complete",
+    metric="euclidean"
+)
+
+hierarchical_labels = cut_tree(
+    customer_tree,
+    n_clusters=3
+).ravel()
+# Display the hierarchical result.
+show_groups(hierarchical_labels, "Hierarchical clustering (3 groups)")
+Hierarchical clustering (3 groups) : category medians in original monetary units
+Customers	Fresh	Milk	Grocery	Frozen	Detergents_Paper	Delicassen
+group							
+0	402	8645.5	3798.0	5163.5	1597.0	952.0	1061.5
+1	5	13569.0	346.0	245.0	2077.0	9.0	860.0
+2	33	2787.0	727.0	1533.0	937.0	96.0	127.0
+
+from scipy.cluster.hierarchy import dendrogram
+
+if customer_tree is None:
+    print("Build customer_tree before displaying the dendrogram.")
+else:
+    fig, ax = plt.subplots(figsize=(10, 5))
+    dendrogram(
+        customer_tree,
+        truncate_mode="lastp",
+        p=24,
+        show_leaf_counts=True,
+        ax=ax,
+    )
+    ax.set_ylabel("Complete-linkage distance")
+    ax.set_xlabel("Collapsed groups; parentheses show customer counts")
+    plt.show()
+
+Question 2a: Describe the smallest hierarchical group’s purchasing profile using its size and two spending medians. Then use the largest group’s size to explain a limitation of this three-group summary.
+
+The smallest hierarchical group is Group 1, which contains only 5 customers. Its median Fresh spending is 13,569 m.u. and its median Milk spending is 346 m.u. (it also has very low Grocery spending of 245 m.u.). This suggests a small group of customers that purchases heavily in Fresh products while spending relatively little on Milk and Grocery items.
+
+A limitation of this three-group summary is that the largest group (Group 0) contains 402 of the 440 customers. Because so many customers are placed into a single group, potentially important differences in purchasing behavior among those customers are hidden. The summary is therefore very broad and may not provide enough detail for account managers to identify distinct purchasing profiles within that large group.
+
+Question 2b: Using the dendrogram, identify an approximate height at which a horizontal cut would produce three groups. What does that height measure?
+
+A horizontal cut at approximately distance 10 would produce three clusters in the dendrogram. At that height, the tree has three major branches that have not yet merged with one another.
+
+The height represents the complete-linkage distance, which measures the maximum distance between any pair of customers in two clusters when those clusters are merged. Larger heights indicate that the clusters being combined are less similar to each other.
+
+3. DBSCAN: Dense Groups and Unassigned Customers
+Create and fit dbscan_small on X with radius 0.8 and min_samples=8. Retrieve its labels as small_labels then use show_groups and density_summary to display the results.
+
+# Fit DBSCAN at radius 0.8, retrieve labels, and display the result.
+
+    # Summarize the radius-0.8 assignments.
+
+dbscan_small = DBSCAN(
+    eps=0.8,
+    min_samples=8
+)
+
+dbscan_small.fit(X)
+small_labels = dbscan_small.labels_
+
+show_groups(small_labels, "DBSCAN (eps=0.8)")
+
+print(density_summary(small_labels))
+DBSCAN (eps=0.8) : category medians in original monetary units
+Customers	Fresh	Milk	Grocery	Frozen	Detergents_Paper	Delicassen
+group							
+Noise	293	6353.0	3737.0	4897.0	1200.0	830.0	741.0
+0	70	9586.0	6878.0	10842.5	1479.5	4453.0	1760.0
+1	77	11818.0	1786.0	2201.0	2583.0	242.0	898.0
+
+{'Groups (excluding noise)': 2, 'Customers in groups': 147, 'Noise customers': 293}
+Repeat the fit with radius 1.2, keeping min_samples=8 and X unchanged. Save the fitted object as dbscan_large and its labels as large_labels. Use show_groups to display the result, then run the supplied comparison table.
+
+# Fit DBSCAN at radius 1.2, retrieve labels, and display the result.
+
+dbscan_large = DBSCAN(
+    eps=1.2,
+    min_samples=8
+)
+
+dbscan_large.fit(X)
+large_labels = dbscan_large.labels_
+
+show_groups(large_labels, "DBSCAN (eps=1.2)")
+DBSCAN (eps=1.2) : category medians in original monetary units
+Customers	Fresh	Milk	Grocery	Frozen	Detergents_Paper	Delicassen
+group							
+Noise	85	5396.0	4753.0	6869.0	839.0	477.0	522.0
+0	355	8797.0	3504.0	4523.0	1730.0	850.0	1000.0
+
+if small_labels is None or large_labels is None:
+    print("Fit both DBSCAN models to compare the two radii.")
+else:
+    comparison = pd.DataFrame(
+        [density_summary(small_labels), density_summary(large_labels)],
+        index=["Radius 0.8", "Radius 1.2"],
+    )
+    display(comparison)
+Groups (excluding noise)	Customers in groups	Noise customers
+Radius 0.8	2	147	293
+Radius 1.2	1	355	85
+Question 3a: What tradeoff do the two DBSCAN radii show between assigning customers to groups and obtaining distinct purchasing profiles? Use the assigned-customer counts and the spending tables.
+
+Replace this text with your answer to 3a.
+
+Question 3b: Should customers labeled noise be excluded from account reviews? Explain what that label tells you and what it does not.
+
+Replace this text with your answer to 3b.
+
+4. Gaussian Mixtures: Overlapping Purchasing Profiles
+Create and fit a Gaussian mixture named mixture on X with three components, full covariance, 10 initializations, and random_state=7130. Print its convergence status, retrieve mixture_labels and memberships, and use show_groups to display the result. Then run the supplied customer-membership table.
+
+mixture = None
+mixture_labels = None
+memberships = None
+# Fit the Gaussian mixture, check convergence, and retrieve both outputs.
+# Display the Gaussian-mixture result.
+mixture = GaussianMixture(
+    n_components=3,
+    covariance_type="full",
+    n_init=10,
+    random_state=7130
+)
+
+mixture.fit(X)
+
+print("Converged:", mixture.converged_)
+
+mixture_labels = mixture.predict(X)
+memberships = mixture.predict_proba(X)
+
+show_groups(mixture_labels, "Gaussian Mixture (3 components)")
+Converged: True
+Gaussian Mixture (3 components) : category medians in original monetary units
+Customers	Fresh	Milk	Grocery	Frozen	Detergents_Paper	Delicassen
+group							
+0	150	5474.0	7690.5	11722.0	990.0	5068.5	1355.5
+1	66	2612.5	3536.0	5018.0	943.5	286.0	273.5
+2	224	11082.0	1985.5	2474.5	2471.5	380.0	921.5
+
+In the spending table, Group j summarizes customers whose hard label is Component j. Its medians describe those assigned customers, not the fitted Gaussian mean.
+
+if memberships is None or mixture_labels is None:
+    print("Retrieve mixture labels and probabilities to inspect customer memberships.")
+else:
+    membership_table = pd.DataFrame(
+        memberships, index=customers.index,
+        columns=[f"Component {j}" for j in range(mixture.n_components)],
+    )
+    membership_table["Hard label"] = mixture_labels
+    print("Two customers' original spending:")
+    display(customers.loc[[50, 275], FEATURES])
+    print("Their relative memberships and hard labels:")
+    display(membership_table.loc[[50, 275]].round(3))
+Two customers' original spending:
+Fresh	Milk	Grocery	Frozen	Detergents_Paper	Delicassen
+customer_id						
+50	4967	21412	28921	1798	13583	1163
+275	894	1703	1841	744	759	1153
+Their relative memberships and hard labels:
+Component 0	Component 1	Component 2	Hard label
+customer_id				
+50	0.999	0.001	0.000	0
+275	0.306	0.261	0.432	2
+Question 4a: Which customer, 50 or 275, has the less decisive Gaussian-mixture assignment? Quote its membership probabilities and describe its two leading components using their purchasing profiles.
+
+Customer 275 has the less decisive Gaussian-mixture assignment. Its membership probabilities are 0.306 for Component 0, 0.261 for Component 1, and 0.432 for Component 2. Since the probabilities are spread across multiple components, the model is relatively uncertain about which purchasing profile best fits this customer. In contrast, Customer 50 has a very decisive assignment with probabilities of 0.999, 0.001, and 0.000.
+
+Customer 275's two leading components are Component 2 and Component 0. Component 2 contains 224 customers and has high median Fresh spending (11,082 m.u.) but relatively low Grocery spending (2,474.5 m.u.). Component 0 contains 150 customers and has higher median Grocery spending (11,722 m.u.) and Detergents_Paper spending (5,068.5 m.u.). Therefore, Customer 275 appears to share characteristics of both a Fresh-focused purchasing profile and a Grocery/household-products purchasing profile.
+
+Question 4b: What information would an account manager lose by receiving only this customer’s hard label? How might retaining the probabilities change the review?
+
+If an account manager received only Customer 275's hard label (Component 2), they would lose information about the customer's similarity to the other purchasing profiles. The hard label suggests the customer belongs entirely to one group, while the probabilities show meaningful overlap with Components 0 and 1.
+
+Retaining the probabilities would help the account manager recognize that Customer 275 has a mixed purchasing pattern rather than a clear membership in a single profile. During the account review, the manager could prepare for products associated with both Component 2's Fresh-oriented customers and Component 0's higher Grocery and Detergents_Paper customers, leading to a more informed discussion and potentially better recommendations.
+
+5. Experiment with the Clustering Microscope
+Use the HW3B Clustering Microscope to explore the same customers and six-feature representation. See the quickstart for launching it. Change model settings to refit; change plot axes or select customers to inspect the existing fit. The plot and selected-versus-all summaries appear side by side. Try settings freely, but report only one three-setting comparison below. Record findings in this notebook; no separate microscope submission is required.
+
+Question 5a: Choose one clustering method and one setting in the HW3B microscope. Compare the homework setting with two alternatives, keeping all other model settings fixed. Record the three settings and what changed in customer counts, purchasing profiles, noise, or membership ambiguity. A compact table or short paragraph is sufficient.
+
+Groups	Customer Counts	Observation
+2	188, 252	Two broad purchasing profiles. Several customer types are combined into larger groups.
+3 (default)	81, 212, 147	Produces three distinct purchasing profiles, including a grocery/detergents-oriented group and two Fresh-oriented groups.
+4	61, 132, 118, 129	Splits an existing profile into smaller subgroups, creating more detailed purchasing profiles.
+As the number of groups increased from 2 to 4, the purchasing profiles became more specific and the customer counts per group became smaller. The 3-group solution provided a balance between simplicity and detail, while the 4-group solution revealed additional variation among customers.
+
+Question 5b: Which finding remained useful across your settings, and which depended on the setting? Use a rectangle or lasso selection to inspect a purchasing pattern: report the selected customer count and one selected-versus-all spending comparison. Explain what an account manager could reasonably learn from your experiment. Agreement across settings is a valid finding; you do not need to declare a best algorithm.
+
+One finding that remained useful across all three settings was the separation between customers with relatively high Fresh spending and customers with relatively high Grocery and Detergents_Paper spending. This pattern appeared regardless of whether K-means used 2, 3, or 4 groups. The exact number and size of the groups depended on the setting, but the general purchasing differences remained visible.
+
+Using a rectangle selection on the scatterplot, I selected a cluster of customers with high Fresh spending. The selected customers showed higher median Fresh spending than the overall customer median of 8,504 m.u., while their Grocery spending was lower than the all-customer median of 4,755.5 m.u. This suggests that these customers are more focused on Fresh products than the average account.
+
+An account manager could reasonably learn that some customers consistently emphasize Fresh products while others purchase larger amounts of Grocery and household products. This information could help guide account reviews, product recommendations, and inventory discussions even when the clustering settings are changed.
+
+Check and Submit
+Submit one completed .ipynb notebook with your code, answers to Questions 1a–5b, displayed tables and figures, and assistance disclosure. Restart the runtime and run all cells in order before downloading. Check that your explanations match your results and that all five purchasing-profile displays and the dendrogram are present. You do not need to submit the CSV separately.
+
+Evaluation	Points
+K-means application and purchasing-profile interpretation	2.0
+Hierarchical application and interpretation of the cut	2.0
+DBSCAN comparison, customer coverage, and noise interpretation	2.0
+GMM outputs and membership interpretation	2.0
+Experiment and evidence-based interpretation	1.5
+Reproducibility and assistance disclosure	0.5
+Total	10.0
+Short, accurate responses are sufficient. A table of results does not replace the requested interpretation. Different descriptive names and defensible comparisons are welcome.
+
+You may use course materials, documentation, and LLM assistance for understanding and debugging. This is individual work. Your explanations must be your own, and you must be able to explain or revise your code and reasoning. Identify material assistance and how you checked it, or write None.
+
+
+
+
+Homework 4: Anomaly Scores and Review Decisions
+Suppose a laboratory can review 150 white-wine records. Use LOF and Isolation Forest to choose records, compare their selections with sensory ratings, and examine how one neighborhood choice changes the result. Begin with a small LOF calculation to connect the software scores to the method.
+
+This individual assignment is worth 10 points and is due November 1 at 11:59 p.m. Central. Complete the Isolation Forest modeling cell in Section 2 and the 10-neighbor LOF modeling cell in Section 4 and answer Questions 1a–4b briefly. Setup, data preparation, displays, and selection code are supplied.
+
+Use the 09b notebook, especially “Fit And Inspect LOF” and “Fit The Forest,” and the 10a notebook, especially “Score The Red-Wine Records,” “Set A Review Threshold,” and “Check Whether A Setting Changes The Decision.”
+
+1. Calculate one LOF score
+Use these invented values on a number line, with : 0, 2, 5, 12, 40, 50, 70. Each observation is excluded from its own neighbor set. Use the pseudocode below to calculate . Calculate the required local reachability densities for 0 and its two nearest neighbors, 2 and 5.
+
+Recall that the radius belongs to the receiving neighbor :
+
+
+ 
+
+ 
+
+The process of calculating LOF can be described in three passes. Here, radius[p] denotes , the distance from  to its kth-nearest neighbor; in this exercise, . Similarly, lrd[p] and lof[p] denote  and  for the chosen :
+
+INPUT:
+    observations X
+    neighborhood size k, where 1 ≤ k < number of observations
+    distance function d
+
+PASS 1: Find each observation's neighbors and radius
+    for each observation p in X:
+        neighbors[p] = k nearest observations to p, excluding p itself
+        radius[p] = distance from p to its kth-nearest neighbor
+
+PASS 2: Calculate local reachability density
+    for each observation p in X:
+        total_reach = 0
+
+        for each neighbor o in neighbors[p]:
+            reach = max(d(p, o), radius[o])
+            total_reach = total_reach + reach
+
+        mean_reach = total_reach / k
+        lrd[p] = 1 / mean_reach
+
+PASS 3: Calculate Local Outlier Factor
+    for each observation p in X:
+        total_neighbor_density = 0
+
+        for each neighbor o in neighbors[p]:
+            total_neighbor_density += lrd[o]
+
+        mean_neighbor_density = total_neighbor_density / k
+        lof[p] = mean_neighbor_density / lrd[p]
+In this pseudocode:
+
+radius[o] depends on o's neighbors
+reach(p, o) uses radius[o]
+lrd[p] = 1 / mean reachability distance from p to its neighbors
+lof[p] compares neighboring LRDs with p's own LRD
+Show the arithmetic, using fractions or at least three decimal places. You may use a calculator or explicit Python arithmetic. Type your calculations below or attach a PDF or clear JPG/PNG photographs with your notebook. Label attachments 1a–1b and include your name.
+
+1a. Use the pseudocode to calculate . Show:
+
+The two nearest neighbors and second-neighbor radius for each of 0, 2, and 5.
+The reachability distances and LRD for each of these three observations.
+The average LRD of 0's two nearest neighbors and the resulting LOF for 0.
+1a. Calculate the Local Outlier Factor (LOF) for Observation 0
+
+Given the observations:
+
+
+With , each observation is excluded from its own neighbor set.
+
+Step 1: Find nearest neighbors and neighborhood radii
+
+The radius is the distance to the second-nearest neighbor.
+
+| Observation | Two nearest neighbors | Radius | |:---:|:---:|:---:| | 0 | 2, 5 | 5 | | 2 | 0, 5 | 3 | | 5 | 2, 0 | 5 |
+
+Step 2: Calculate reachability distances and LRDs
+
+Reachability distance is calculated using the radius of the receiving neighbor:
+
+
+Local reachability density is the inverse of the mean reachability distance:
+
+ 
+
+Observation 0 (neighbors: 2 and 5)
+
+
+
+ 
+ 
+
+Observation 2 (neighbors: 0 and 5)
+
+
+
+ 
+ 
+
+Observation 5 (neighbors: 2 and 0)
+
+
+
+ 
+ 
+
+Summary:
+
+| Observation | Reachability distances | Mean reachability distance | LRD | |:---:|:---:|:---:|:---:| | 0 | 3, 5 | 4 | 0.250 | | 2 | 5, 5 | 5 | 0.200 | | 5 | 3, 5 | 4 | 0.250 |
+
+Step 3: Calculate LOF for observation 0
+
+The LOF is the average LRD of the nearest neighbors divided by the observation's own LRD:
+
+ 
+
+Substituting the calculated values:
+
+ 
+
+ 
+
+
+An LOF score of 0.900 indicates that observation 0 has a slightly higher local density than its neighbors. Its score is close to 1, suggesting that it is not a strong local outlier.
+
+1b. What does the LOF ratio say about 0's local support relative to its neighbors? Does it give a probability that the observation is faulty?
+
+1b. Interpret the LOF Score
+
+The LOF score for observation 0 is 0.900, which indicates that its local reachability density is slightly higher than the average density of its two nearest neighbors. In other words, observation 0 has relatively strong local support compared to its neighbors and is not particularly isolated.
+
+The LOF score does not represent the probability that an observation is faulty. Instead, it is a relative measure of local density. A score near 1 indicates similar density to neighboring observations, while a score substantially greater than 1 suggests that an observation is less densely surrounded and may be a local outlier. Therefore, an LOF score alone cannot determine whether an observation is faulty.
+
+2. Select records for review
+The prepared file contains 4,898 white-wine records from the UCI Wine Quality dataset, credited to Cortez and colleagues (2009), DOI 10.24432/C56S3T, under CC BY 4.0. Each row records 11 chemical measurements and a sensory quality rating.
+
+Residual sugar is measured in g/L, sulfur dioxide in mg/L, and alcohol in percent by volume. Density is recorded in g/cm³. The remaining features describe acidity, salts, and pH. record_id identifies source rows and is excluded from the detector inputs. quality is the median of at least three sensory assessments, on a 0–10 scale, and is excluded from the detector inputs.
+
+Run the code cell below to load and standardize the dataset. Use the result for all subsequent calculations.
+
+from pathlib import Path
+from urllib.request import urlopen
+
+import matplotlib.pyplot as plt
+import pandas as pd
+import sklearn
+from IPython.display import display
+from sklearn.ensemble import IsolationForest  # noqa: F401 — used in modeling task
+from sklearn.neighbors import LocalOutlierFactor  # noqa: F401 — used in modeling tasks
+from sklearn.preprocessing import StandardScaler
+
+DATA_URL = (
+    "https://raw.githubusercontent.com/olearydj/INSY7130/"
+    "main/homework/hw4/data/white-wine-records.csv"
+)
+candidates = [
+    Path("data/white-wine-records.csv"),
+    Path("homework/hw4/data/white-wine-records.csv"),
+    Path("content/homework/hw4/data/white-wine-records.csv"),
+]
+data_path = next((path for path in candidates if path.is_file()), None)
+if data_path is not None:
+    wine = pd.read_csv(data_path).set_index("record_id")
+else:
+    with urlopen(DATA_URL, timeout=30) as response:
+        wine = pd.read_csv(response).set_index("record_id")
+
+chemistry = wine.drop(columns="quality")
+assert wine.shape == (4898, 12) and not wine.isna().any().any()
+assert chemistry.shape[1] == 11
+scaler = StandardScaler()
+X = scaler.fit_transform(chemistry)
+BUDGET = 150
+print(f"scikit-learn {sklearn.__version__}; {len(wine):,} records; {X.shape[1]} features")
+preview_fields = ["residual sugar", "density", "alcohol", "quality"]
+# Preview a few fields; X above still contains all 11 chemical features.
+display(wine[preview_fields].head())
+scikit-learn 1.9.1; 4,898 records; 11 features
+residual sugar	density	alcohol	quality
+record_id				
+1	20.7	1.0010	8.8	6
+2	1.6	0.9940	9.5	6
+3	6.9	0.9951	10.1	6
+4	8.5	0.9956	9.9	6
+5	8.5	0.9956	9.9	6
+Run the following code cell to define the functions that select records and summarize outcome counts. choose_reviews finds the 150th-highest full-precision score and selects every record at or above it. Boundary ties are kept together, so a threshold can select more than the nominal budget. Use the actual selected counts displayed in the review summaries below in your answers. The threshold implements the laboratory’s review capacity.
+
+def choose_reviews(score, budget=BUDGET):
+    cutoff = score.nlargest(budget).iloc[-1]
+    return score.ge(cutoff)
+
+
+def outcome_counts(chosen, low_rating):
+    return {
+        "Reviewed": int(chosen.sum()),
+        "Low-rated found (TP)": int((chosen & low_rating).sum()),
+        "Other reviewed (FP)": int((chosen & ~low_rating).sum()),
+        "Low-rated missed (FN)": int((~chosen & low_rating).sum()),
+        "Other unreviewed (TN)": int((~chosen & ~low_rating).sum()),
+    }
+Run the cell below to fit an LOF model with 20 neighbors. The constructor sets the neighborhood size, .fit(X) calculates local support in this collection, and negating negative_outlier_factor_ makes larger scores mean more unusual. This task scores the fitted collection, so we keep the default novelty=False. Use this fitted-object pattern and the lecture examples for the two modeling tasks that follow.
+
+lof_model = LocalOutlierFactor(n_neighbors=20)
+lof_model.fit(X)
+lof_scores = -lof_model.negative_outlier_factor_
+In the code cell below, fit an Isolation Forest to the same X, using 300 trees, 256 samples per tree, and random_state=7130. Store it as forest_model and the larger-means-more-unusual scores as isolation_scores. Retrieve score_samples(X) and reverse its sign, as in the lecture.
+
+isolation_scores = None
+# Fit the Isolation Forest and retrieve the correctly oriented score array.
+forest_model = IsolationForest(
+    n_estimators=300,
+    max_samples=256,
+    random_state=7130,
+)
+
+forest_model.fit(X)
+
+isolation_scores = -forest_model.score_samples(X)
+Run the code cell below to display each detector’s review count, print the counts of shared and method-only selections, and plot the two anomaly scores. In the scatterplot, each point represents one record; the dashed lines mark the two review thresholds. Scores at or above a method’s threshold are selected. The LOF axis uses a logarithmic scale to keep the dense group and the largest scores visible. The threshold lines divide the plot into regions selected by both detectors, by one detector, or by neither.
+
+scores = flags = None
+if lof_scores is None or isolation_scores is None:
+    print("Complete the Isolation Forest cell above to compare review lists.")
+else:
+    scores = pd.DataFrame(
+        {"LOF": lof_scores, "Isolation Forest": isolation_scores}, index=wine.index
+    )
+    flags = scores.apply(choose_reviews)
+    display(pd.DataFrame({"Records selected": flags.sum()}))
+    overlap = pd.Series({
+        "LOF only": int((flags["LOF"] & ~flags["Isolation Forest"]).sum()),
+        "Both methods": int(flags.all(axis=1).sum()),
+        "Isolation Forest only": int((~flags["LOF"] & flags["Isolation Forest"]).sum()),
+    })
+    print("; ".join(f"{label}: {count}" for label, count in overlap.items()))
+    thresholds = scores.apply(lambda column: column.nlargest(BUDGET).iloc[-1])
+    fig, ax = plt.subplots(figsize=(8, 4.5), layout="constrained")
+    ax.scatter(scores["LOF"], scores["Isolation Forest"], s=14, alpha=0.35, color="#245c91")
+    ax.axvline(thresholds["LOF"], color="#333333", linestyle="--", label="LOF threshold")
+    ax.axhline(thresholds["Isolation Forest"], color="#b65313", linestyle="--",
+               label="Isolation Forest threshold")
+    ax.set(xscale="log", xlabel="LOF score (log scale): more unusual →",
+           ylabel="Isolation Forest score: more unusual →", title="Scores and review thresholds")
+    ax.set_xticks([1, 1.5, 2, 3, 5, 7], labels=["1", "1.5", "2", "3", "5", "7"])
+    ax.annotate("Record 2782",
+                xy=(scores.loc[2782, "LOF"], scores.loc[2782, "Isolation Forest"]),
+                xytext=(-18, -24), textcoords="offset points",
+                ha="right", va="top", fontsize=10,
+                arrowprops={"arrowstyle": "->", "color": "#333333"})
+    ax.minorticks_off()
+    ax.legend(loc="lower right")
+    ax.spines[["top", "right"]].set_visible(False)
+    plt.show()
+Records selected
+LOF	150
+Isolation Forest	150
+LOF only: 98; Both methods: 52; Isolation Forest only: 98
+
+2. In the scatterplot above, choose one region where the methods disagree. Identify it relative to the threshold lines, state which method selects those records, and report its record count from the method-only selection counts printed above the scatterplot. Using the methods’ scoring ideas, explain why the same records and review capacity need not produce the same selections. Two or three sentences are sufficient.
+
+One region where the methods disagree is the area to the right of the LOF threshold line but below the Isolation Forest threshold line. Records in this region are selected by LOF only, and the printed counts show 98 LOF-only records.
+
+The methods can disagree because they measure unusualness differently. LOF compares an observation's local density with the density of its neighbors, while Isolation Forest scores how easily an observation can be isolated by random partitions. As a result, the same review capacity (150 records) and the same dataset can produce different review lists even when both methods are identifying unusual chemical profiles.
+
+3. Compare selections with sensory ratings
+For this comparison, define low-rated as quality <= 4, following 10a.
+
+Run the code cell below to display a table reporting how many selected records meet the low-rating criterion. Precision divides that number by the number reviewed; recall divides it by all low-rated records in the collection. The table also reports both percentages. To assess their usefulness, compare the observed yield with uniform random selection of the same number of records.
+
+low_rating = wine["quality"].le(4)
+print("Low-rated records in the collection:", int(low_rating.sum()), "of", len(wine))
+if flags is None:
+    print("Complete Section 2 to display the outcome counts.")
+else:
+    counts = pd.DataFrame({
+        method: outcome_counts(flags[method], low_rating) for method in flags
+    }).T
+    outcomes = counts[["Reviewed", "Low-rated found (TP)"]].copy()
+    outcomes["Precision (%)"] = 100 * outcomes["Low-rated found (TP)"] / outcomes["Reviewed"]
+    outcomes["Recall (%)"] = 100 * outcomes["Low-rated found (TP)"] / low_rating.sum()
+    display(outcomes.round(1))
+Low-rated records in the collection: 183 of 4898
+Reviewed	Low-rated found (TP)	Precision (%)	Recall (%)
+LOF	150	22	14.7	12.0
+Isolation Forest	150	23	15.3	12.6
+3a. Based on the number of low-rated records in the collection, how many low-rated records would you expect if 150 records were selected uniformly at random from the collection?
+
+Based on the true-positive counts in the table above, do the detectors find more low-rated records than expected from random review? How does that comparison help you interpret their precision and recall? What relationship between chemical unusualness and rating does this suggest? Name one additional check before using a detector to find chemical faults in future wines. Three or four sentences after the calculations are sufficient.
+
+The expected number of low-rated records under uniform random selection is
+
+150 × (183 / 4898) = 5.604 ≈ 6
+
+so I would expect about 5.6 low-rated records (approximately 6 records) in a random sample of 150 wines.
+
+Both detectors found substantially more low-rated records than expected by chance. LOF found 22 low-rated wines and Isolation Forest found 23, compared with an expectation of only about 6 under random review. This indicates that the detectors are concentrating low-rated wines more effectively than random selection, which helps explain their precision values of 14.7% and 15.3% and recall values of 12.0% and 12.6%. The results suggest that unusual chemical profiles are associated with low sensory ratings, although the relationship is not strong enough to identify all low-rated wines. Before using a detector to identify chemical faults in future wines, I would validate its performance on an independent dataset or compare anomaly scores with confirmed chemical-fault records.
+
+Run the code cell below to display two tables for record 2782, labeled in the upper-right corner of the scatterplot above: its measurements and rating beside collection medians, and its anomaly rank under each detector. Compare this record’s sensory rating with its chemical measurements and anomaly ranks. The first table shows selected measurements in their original units alongside collection medians.
+
+profile_fields = ["residual sugar", "density", "volatile acidity", "quality"]
+profile = pd.DataFrame({
+    "Record 2782": wine.loc[2782, profile_fields],
+    "Collection median": wine[profile_fields].median(),
+})
+display(profile)
+if scores is not None:
+    print("Rank 1 indicates the highest anomaly score:")
+    display(scores.rank(ascending=False, method="min").loc[[2782]].astype(int))
+Record 2782	Collection median
+residual sugar	65.80000	5.20000
+density	1.03898	0.99374
+volatile acidity	0.96500	0.26000
+quality	6.00000	6.00000
+Rank 1 indicates the highest anomaly score:
+LOF	Isolation Forest
+record_id		
+2782	1	1
+3b. Does record 2782 meet the low-rating criterion? Does that establish whether its chemistry is typical? Use one measurement comparison from the first table above and the anomaly ranks from the second table to explain what you would investigate. Two or three sentences are sufficient.
+
+No. Record 2782 does not meet the low-rating criterion because its quality rating is 6, which is greater than 4. However, that does not mean its chemistry is typical. For example, its residual sugar is 65.8 g/L compared with the collection median of 5.2 g/L, and both LOF and Isolation Forest rank it 1st (most anomalous) in the dataset. I would investigate whether these unusually high chemical measurements represent a legitimate wine style, a measurement issue, or another unusual production condition.
+
+4. Sensitivity to Neighborhood Size
+Keep the same records, features, scaler, and capacity of 150. In the first code cell below, fit a second LOF model with 10 neighbors, and save its larger-means-more-unusual score array as lof10_scores. Use a separate fitted model named lof10_model so the earlier scores remain available. Run the second code cell below to display the outcome counts for both neighborhood sizes and print how many records remain selected, enter, and leave the review list.
+
+lof10_scores = None
+# Fit a second LOF model with 10 neighbors and retrieve its oriented scores.
+lof10_model = LocalOutlierFactor(n_neighbors=10)
+
+lof10_model.fit(X)
+
+lof10_scores = -lof10_model.negative_outlier_factor_
+if flags is None or lof10_scores is None:
+    print("Complete Sections 2 and 4 to compare the two neighborhoods.")
+else:
+    score10 = pd.Series(lof10_scores, index=wine.index)
+    chosen10 = choose_reviews(score10)
+    sensitivity = pd.DataFrame({
+        "20 neighbors": outcome_counts(flags["LOF"], low_rating),
+        "10 neighbors": outcome_counts(chosen10, low_rating),
+    }).T
+    display(sensitivity)
+    common = int((flags["LOF"] & chosen10).sum())
+    print("Records selected at both neighborhood sizes:", common)
+    print("Records entering the list:", int((chosen10 & ~flags["LOF"]).sum()))
+    print("Records leaving the list:", int((flags["LOF"] & ~chosen10).sum()))
+Reviewed	Low-rated found (TP)	Other reviewed (FP)	Low-rated missed (FN)	Other unreviewed (TN)
+20 neighbors	150	22	128	161	4587
+10 neighbors	150	19	131	164	4584
+Records selected at both neighborhood sizes: 106
+Records entering the list: 44
+Records leaving the list: 44
+4a. Using the counts printed above, how many records remain selected, enter, and leave when the neighborhood changes? Use the outcome table above to compare the number of low-rated wines found and calculate precision at the two settings. Does an unchanged review count establish a stable investigation list?
+
+When the neighborhood size changed from 20 to 10 neighbors, 106 records remained selected, 44 records entered the review list, and 44 records left the review list.
+
+The 20-neighbor model found 22 low-rated wines, while the 10-neighbor model found 19 low-rated wines. Precision for the 20-neighbor model was
+
+22 / 150 = 0.1467 ≈ 14.7%
+
+and precision for the 10-neighbor model was
+
+19 / 150 = 0.1267 ≈ 12.7%.
+
+Although both settings reviewed the same number of records (150), the investigation list changed substantially because 44 records entered and 44 records left the list. Therefore, an unchanged review count does not establish a stable investigation list; changing the neighborhood size can change which records are considered most unusual and affect the number of low-rated wines found.
+
+4b. Explain why changing n_neighbors requires a new LOF fit, whereas changing a threshold on existing scores does not. What part of the analysis changes in each case?
+
+Suppose review capacity could change. If missing a low-rated wine were more costly than reviewing a wine rated above 4, would you raise or lower the threshold? How would your choice change if those costs were reversed?
+
+Changing n_neighbors requires a new LOF fit because the neighborhood size determines which observations are considered neighbors and therefore affects the reachability distances, local reachability densities, and final LOF scores. When n_neighbors changes, the underlying anomaly scores must be recalculated. In contrast, changing a threshold on existing scores does not change the scores themselves; it only changes which observations are selected for review from the same set of scores.
+
+If missing a low-rated wine were more costly than reviewing a wine rated above 4, I would lower the threshold so that more wines are selected for review. This would increase recall and reduce the chance of missing low-rated wines, although it would also increase the number of false positives. If reviewing wines above 4 were more costly than missing a low-rated wine, I would raise the threshold to review fewer wines and focus only on the most unusual records, accepting that more low-rated wines might be missed.
+
+Check and submit
+Submit your completed .ipynb with the Isolation Forest and 10-neighbor LOF modeling cells completed, answers to 1a, 1b, 2, 3a, 3b, 4a, and 4b, the tables, printed counts, and score scatterplot produced by the code cells, and your assistance disclosure. Include Part 1 in the notebook or as a separate PDF or clear JPG/PNG photographs in the same Canvas submission. If using attachments, write “See attached calculations” in the corresponding response blocks. Do not submit the CSV separately.
+
+Restart the runtime and run all cells in order. Check that no “Complete...” reminders remain, that your calculations use the counts in the Section 3 and Section 4 output tables, and that your explanations agree with the tables, printed counts, and scatterplot produced by your notebook.
+
+Evaluation	Points
+Section 1: LOF calculation and meaning	2.5
+Section 2: model application and review-list comparison	2.0
+Section 3: random-review comparison, validation, and record interpretation	3.0
+Section 4: sensitivity implementation and interpretation	2.0
+Reproducibility and assistance disclosure	0.5
+Total	10.0
+Short, accurate explanations are sufficient. You may use course materials, documentation, and LLM assistance for understanding and debugging. Your submitted calculations and explanations must be your own, and you must be able to explain or revise your code and reasoning. Identify material assistance and how you checked it, or write None.
+
+
+
+
+
+Homework 5A: “Done—Looks Great!”
+
+Due Thursday, November 12, 2026, at 11:59 p.m. Central.
+
+Your manager forwards a notebook from a former colleague with the following note:
+
+He was very enthusiastic about AI-assisted analysis. Checking the results... not so much. He's since moved on. Please review and finalize the work to make it presentable.
+
+I need your revised notebook by Thursday, November 12, at 11:59 p.m. Central. Plan to spend no more than 3 hours working on this assignment, including reviewing relevant course material, implementing and checking the analysis, and writing your responses. You may continue if needed, but stop after 5 hours of assignment work. Separate study of general Python fundamentals does not count toward this limit; debugging this notebook does. You are not expected to reach the time limit. In your responses to my comments, explain what you finished and checked. For anything unfinished, show your attempt, identify the sticking point, and say what you would try next.
+
+The notebook contains useful work, questionable choices, and unfinished analysis. Your job is to take responsibility for its validity (does it answer the question appropriately?), veracity (does the code do what it claims?), and completeness.
+
+Your Assignment
+
+Review, correct, and complete the inherited notebook to produce a defensible analysis of Australian quarterly cement production. Explain temporal patterns, investigate recent changes in activity, and determine whether a component-based forecast improves on time-only regression.
+
+Use the provided 1990–2009 data. Take the end of 2007 Q4 as the information boundary for the briefing: use history through that date for component estimates, adjustment comparisons, dependence analysis, and model fitting. Evaluate forecasts on the eight quarters of 2008–2009.
+
+Adjust the inherited work as appropriate. Add code and Markdown cells where needed. You do not need to reproduce every element from the lectures, implement additional forecast models (except as directed), or write a separate report.
+
+This individual assignment is worth 10 points. Partial credit is available for sound analysis, correct diagnoses, and meaningful progress, even when a section is unfinished. Make your work and reasoning visible.
+
+You may use lectures, documentation, and AI assistance to understand, implement, and check your work. Your explanations must be your own, and you must be able to explain or revise the code and reasoning. Record material assistance and how you verified it. The original analyst's problem was submitting unchecked work; using assistance does not transfer your responsibility for the result.
+
+References: 11a: decomposition, 11b: dependence and differencing, and 12a: forecasting.
+
+Reliable Setup and Utilities
+
+The briefing scenario is fictional, but the data are real, from the Australian Bureau of Statistics through the FPP data collection. The extract retains original measurements for 1990–2009 without imputation or seasonal adjustment. Each row is a national quarterly total of Australian Portland cement production, measured in thousands of tonnes. Quarter-start dates label whole quarters.
+
+Data attribution and reuse terms: Cement Production Data.
+
+The supplied data-loading code is correct and is outside the scope of your audit.
+
+from pathlib import Path
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+from IPython.display import display
+from sklearn.linear_model import LinearRegression
+from statsmodels.graphics.tsaplots import plot_acf
+from statsmodels.tsa.seasonal import seasonal_decompose
+
+paths = [Path("cement-production.csv"), Path("data/cement-production.csv"),
+         Path("content/homework/hw5a/data/cement-production.csv")]
+data_url = (
+    "https://raw.githubusercontent.com/olearydj/INSY7130/main/"
+    "homework/hw5a/data/cement-production.csv"
+)
+data_source = next((p for p in paths if p.is_file()), data_url)
+frame = pd.read_csv(data_source)
+frame["quarter"] = pd.to_datetime(frame["quarter"], format="%Y-%m-%d")
+cement = frame.set_index("quarter")["production_thousand_tonnes"].astype(float)
+assert cement.index.is_unique and cement.index.is_monotonic_increasing
+assert cement.index.equals(pd.date_range("1990-01-01", "2009-10-01", freq="QS"))
+assert cement.notna().all()
+cement = cement.asfreq("QS")
+plt.rcParams.update({"font.size": 11, "axes.spines.top": False, "axes.spines.right": False})
+display(cement.head().to_frame())
+production_thousand_tonnes
+quarter	
+1990-01-01	1565.0
+1990-04-01	1645.0
+1990-07-01	1658.0
+1990-10-01	1668.0
+1991-01-01	1343.0
+The following helper functions display supplied results or score already aligned forecasts. They are optional, correct as provided, and outside the scope of your audit. Selecting the analysis data, fitting models, and deciding which evidence is appropriate belong to the inherited analysis you will review and complete.
+
+def show_components(observed, result, title):
+    """Plot a fitted classical or STL result against its input series."""
+    fig, axes = plt.subplots(3, 1, figsize=(10, 7), sharex=True, layout="constrained")
+    axes[0].plot(observed.index, observed, color="0.65", label="Observed")
+    axes[0].plot(observed.index, result.trend, label="Trend-cycle")
+    axes[0].legend()
+    for ax, field in zip(axes[1:], ["seasonal", "resid"], strict=True):
+        ax.plot(observed.index, getattr(result, field))
+        ax.axhline(0, color="0.6", linewidth=0.8)
+        ax.set_title("Seasonal" if field == "seasonal" else "Remainder")
+    for ax in axes:
+        ax.set_ylabel("Thousand tonnes")
+    axes[0].set_title(title)
+    axes[-1].set_xlabel("Year")
+    plt.show()
+    plt.close(fig)
+
+
+def show_dependence(series, title):
+    """Display a series and its sample ACF through eight quarterly lags."""
+    values = series.dropna()
+    fig, axes = plt.subplots(1, 2, figsize=(11, 3.5), layout="constrained")
+    axes[0].plot(values.index, values)
+    axes[0].set(title=title, xlabel="Year", ylabel="Thousand tonnes")
+    plot_acf(values, lags=8, zero=False, alpha=None, ax=axes[1])
+    axes[1].set(title="Sample ACF", xlabel="Lag (quarters)", ylabel="ACF", ylim=(-1, 1))
+    plt.show()
+    plt.close(fig)
+
+
+def score_forecasts(actual, predictions):
+    """Return metrics and actual-minus-predicted errors for matching date indexes.
+
+    actual is a Series; predictions is a DataFrame with one column per method.
+    This checks alignment, not whether model fitting used permissible information.
+    """
+    if not actual.index.equals(predictions.index):
+        raise ValueError("Actuals and predictions must have the same dates in the same order.")
+    if actual.isna().any() or predictions.isna().any().any():
+        raise ValueError("Every evaluated date needs an actual and each method's prediction.")
+    errors = predictions.rsub(actual, axis="index")
+    scores = pd.DataFrame({"MAE": errors.abs().mean(),
+                           "RMSE": np.sqrt(errors.pow(2).mean()),
+                           "Mean error": errors.mean()})
+    return scores, errors
+Inherited Notebook: Cement Briefing
+
+This was the last version provided by your former colleague. It came with the note:
+
+Done. Looks great! The seasonal model tracks production well. Main takeaways are below. AI makes this so easy! ;-P
+
+Your audit covers the inherited analysis from “First Look” through “Draft Recommendation,” including its code, results, and claims. Correct and extend that analysis to address the manager’s feedback. Your response in Draft Recommendation serves as the completed briefing. Comments labeled Manager’s comment identify requested follow-up work; the rest is your former colleague’s work as submitted.
+
+Respond to each manager comment where indicated. Explain what you changed or added and how you checked it; identify any original problem or omission. If you retained the existing work, explain why.
+
+First Look
+
+The series grows over time and first quarters tend to be lower. There is enough regularity here to make a useful forecast.
+
+analysis = cement
+fig, axes = plt.subplots(1, 2, figsize=(11, 4), layout="constrained")
+axes[0].plot(analysis.index, analysis)
+axes[0].set(title="Cement production", xlabel="Year", ylabel="Thousand tonnes")
+# Group observations by calendar year to draw one seasonal line per year.
+for year, values in analysis.groupby(analysis.index.year):
+    axes[1].plot(values.index.quarter, values.to_numpy(), alpha=0.5)
+axes[1].set(title="Seasonal view: one line per year", xlabel="Quarter",
+            ylabel="Thousand tonnes", xticks=[1, 2, 3, 4])
+plt.show()
+plt.close(fig)
+
+Manager’s comment: Describe the main temporal patterns. Which observations support the claim that this series will be useful for forecasting?
+
+The cement-production series shows several temporal patterns that support forecasting. First, production exhibits a clear long-term upward trend from the early 1990s through approximately 2008, increasing from roughly 1,300-1,600 thousand tonnes per quarter at the beginning of the series to more than 2,400-2,600 thousand tonnes in later years. Although there are short-term fluctuations, production does not behave like random noise and instead follows a persistent underlying pattern over time. The seasonal plot indicates a recurring quarterly pattern. Across most years, production is lowest in the first quarter and generally increases through the second and third quarters before remaining high or changing more modestly in the fourth quarter. While the magnitude of the seasonal pattern varies somewhat from year to year, the overall shape is similar across many years, suggesting stable seasonality. These characteristics support the claim that the series should be useful for forecasting because:
+
+The series contains a recognizable trend rather than completely unpredictable variation.
+The quarterly seasonal pattern repeats across years.
+Adjacent observations appear related, indicating temporal dependence rather than independent observations.
+The random fluctuations are relatively small compared with the overall trend and seasonal structure.
+Because forecasting methods work best when future values follow patterns observed in the past, the presence of both a sustained trend and recurring seasonality suggests that meaningful forecasts may be possible. However, forecast usefulness must ultimately be evaluated using withheld future observations rather than visual inspection alone.
+
+Components / Recent Activity
+
+Using the quarterly cycle, the decomposition separates the underlying level, recurring seasonality, and residual variation.
+
+decomposition = seasonal_decompose(analysis, model="additive", period=4)
+show_components(analysis, decomposition, "Classical decomposition")
+
+# Direct calculation to check the library's centered trend and seasonal effects.
+# These weights center a four-quarter moving average on an observation.
+# A complete window needs two observations on either side of its date.
+manual_trend = pd.Series(
+    np.convolve(analysis.to_numpy(), np.array([1, 2, 2, 2, 1]) / 8, mode="valid"),
+    index=analysis.index[2:-2],
+)
+detrended = analysis.loc[manual_trend.index] - manual_trend
+# Average the detrended values for each calendar quarter.
+quarter_effects = detrended.groupby(detrended.index.quarter).mean()
+# Center the four effects so their mean is zero.
+quarter_effects -= quarter_effects.mean()
+np.testing.assert_allclose(manual_trend, decomposition.trend.dropna())
+display(quarter_effects.rename("Quarter effect").to_frame())
+
+Quarter effect
+quarter	
+1	-171.889803
+2	33.794408
+3	87.103618
+4	50.991776
+The seasonal pattern represents the same percentage reduction each first quarter, regardless of the production level.
+
+Seasonally adjusted production confirms a substantial decline between late 2006 and early 2007. The downturn is therefore more than the usual first-quarter effect.
+
+adjusted = analysis - decomposition.trend
+recent = pd.DataFrame({"Observed": analysis, "Seasonally adjusted": adjusted}).loc[
+    "2006-10-01":"2007-04-01"
+]
+display(recent.round(2))
+display(recent.diff().iloc[1:].round(2))
+Observed	Seasonally adjusted
+quarter		
+2006-10-01	2451.0	116.50
+2007-01-01	2140.0	-218.62
+2007-04-01	2362.0	-24.12
+Observed	Seasonally adjusted
+quarter		
+2007-01-01	-311.0	-335.12
+2007-04-01	222.0	194.50
+from statsmodels.tsa.seasonal import STL
+
+# STL decomposition requested by the manager
+stl = STL(
+    analysis,
+    period=4,
+    seasonal=7,
+    robust=True
+).fit()
+
+show_components(analysis, stl, "STL decomposition")
+
+# Correct seasonally adjusted series
+classical_adjusted = analysis - decomposition.seasonal
+stl_adjusted = analysis - stl.seasonal
+
+dates = ["2006-10-01", "2007-01-01"]
+
+comparison = pd.DataFrame({
+    "Observed": analysis.loc[dates],
+    "Classical adjusted": classical_adjusted.loc[dates],
+    "STL adjusted": stl_adjusted.loc[dates]
+})
+
+display(comparison.round(2))
+
+changes = comparison.diff().iloc[1]
+display(changes.round(2))
+
+observed_change = (
+    analysis.loc["2007-01-01"]
+    - analysis.loc["2006-10-01"]
+)
+
+print(f"Observed change (2006 Q4 -> 2007 Q1): {observed_change:.2f}")
+
+seasonal_compare = pd.DataFrame({
+    "Classical seasonal": decomposition.seasonal.loc[dates],
+    "STL seasonal": stl.seasonal.loc[dates]
+})
+
+display(seasonal_compare.round(2))
+
+summary = pd.DataFrame({
+    "Change (thousand tonnes)": [
+        analysis.loc["2007-01-01"] - analysis.loc["2006-10-01"],
+        classical_adjusted.loc["2007-01-01"] - classical_adjusted.loc["2006-10-01"],
+        stl_adjusted.loc["2007-01-01"] - stl_adjusted.loc["2006-10-01"]
+    ]
+}, index=[
+    "Observed",
+    "Classical seasonally adjusted",
+    "STL seasonally adjusted"
+])
+
+display(summary.round(2))
+Observed	Classical adjusted	STL adjusted
+quarter			
+2006-10-01	2451.0	2400.01	2360.54
+2007-01-01	2140.0	2311.89	2359.97
+Observed             -311.00
+Classical adjusted    -88.12
+STL adjusted           -0.56
+Name: 2007-01-01 00:00:00, dtype: float64
+Observed change (2006 Q4 -> 2007 Q1): -311.00
+Classical seasonal	STL seasonal
+quarter		
+2006-10-01	50.99	90.46
+2007-01-01	-171.89	-219.97
+Change (thousand tonnes)
+Observed	-311.00
+Classical seasonally adjusted	-88.12
+STL seasonally adjusted	-0.56
+Manager’s comment: Describe the classical decomposition used here and cross-check it with STL using period=4, seasonal=7, and robust=True. Clarify the units of the seasonal effects: does this model describe a constant amount or a constant percentage? Check that the reported adjustment measures what its label claims. Report the observed change from 2006 Q4 to 2007 Q1 and the seasonally adjusted change under each decomposition. Explain what these quantities answer and whether the conclusion about recent activity holds up under STL.
+
+The classical decomposition is an additive decomposition with a quarterly period, where:
+
+
+I verified the trend calculation by reproducing the centered moving average used by seasonal_decompose(). Because the model is additive, the seasonal effects are measured in thousand tonnes, not percentages. Therefore, the inherited statement that Q1 represents the same percentage reduction each year is incorrect. The estimated seasonal effects indicate that Q1 production is about 172 thousand tonnes below trend, while Q2-Q4 production is above trend.
+
+I also found that the notebook's "seasonally adjusted" series was incorrectly calculated as analysis - decomposition.trend. A seasonally adjusted series should remove the seasonal component (analysis - decomposition.seasonal). The observed change from 2006 Q4 to 2007 Q1 was -311.0 thousand tonnes. After seasonal adjustment, the change was -88.1 thousand tonnes under the classical decomposition and -0.6 thousand tonnes under STL (period=4, seasonal=7, robust=True). Both decompositions show that much of the observed decline was seasonal. The classical method suggests a small decline beyond seasonality, while STL suggests almost no underlying decline. Therefore, the inherited claim that there was a substantial downturn beyond the normal first-quarter effect is not strongly supported.
+
+Changes / Dependence
+
+The annual changes look less seasonal than the quarterly changes. The recurring pattern has largely been dealt with.
+
+quarter_change = analysis.diff().dropna()
+annual_change = analysis.diff(4).dropna()
+display(pd.DataFrame({"Production": analysis, "Quarterly change": quarter_change,
+                      "Annual change": annual_change}).loc["2007"].round(2))
+
+# use company helper functions to plot dependence...
+show_dependence(quarter_change, "Quarterly changes")
+show_dependence(annual_change, "Same-quarter-last-year changes")
+
+from statsmodels.stats.diagnostic import acorr_ljungbox
+
+lb = acorr_ljungbox(annual_change, lags=[8], return_df=True)
+display(lb)
+Production	Quarterly change	Annual change
+quarter			
+2007-01-01	2140.0	-311.0	113.0
+2007-04-01	2362.0	222.0	84.0
+2007-07-01	2536.0	174.0	109.0
+2007-10-01	2562.0	26.0	111.0
+
+
+lb_stat	lb_pvalue
+8	54.937049	4.541058e-09
+Manager’s comment: Check that the ordinary and same-quarter-last-year differences answer the different questions their labels imply. Report both changes ending in 2007 Q1, explain what each measures, and verify the annual change against the observations being compared. Assess the annual changes using the time plot, ACF, and a joint statistical test of autocorrelations at lags 1–8. State the tested series, null, test statistic, and p-value. Interpret the result alongside the ACF and explain what the evidence establishes and its limits. Does your test result establish whether the annual-change series is stationary, or whether further differencing is needed? Explain.
+
+I found that the inherited notebook calculated the annual changes incorrectly because both series were defined using analysis.diff(). The correct same-quarter-last-year change is analysis.diff(4).
+
+The quarterly change ending in 2007 Q1 is −311 thousand tonnes, which measures the change from 2006 Q4 to 2007 Q1. The annual change ending in 2007 Q1 is 113 thousand tonnes, which measures the change from 2006 Q1 to 2007 Q1. I verified the annual change directly: production increased from 2027 thousand tonnes in 2006 Q1 to 2140 thousand tonnes in 2007 Q1, a difference of 113 thousand tonnes.
+
+The annual-change series appears less seasonal than the quarterly changes, but the ACF still shows substantial autocorrelation at several lags. A Ljung-Box test applied to the annual-change series through lag 8 produced a test statistic of 54.94 and a p-value of 4.54 × 10⁻⁹. The null hypothesis is that the autocorrelations at lags 1 through 8 are jointly zero. Because the p-value is much smaller than 0.05, I reject the null and conclude that significant autocorrelation remains in the annual-change series.
+
+This result provides evidence of dependence but does not establish whether the series is stationary or whether additional differencing is required. The Ljung-Box test only assesses autocorrelation, not stationarity itself, so additional analysis would be needed to answer those questions.
+
+Model Attempt
+
+First a straight line, then a line through the decomposed trend with the quarterly effects added back. Both use the same time coordinate.
+
+# Number quarters consecutively to give both regressions the same time coordinate.
+time = pd.Series(np.arange(len(cement), dtype=float), index=cement.index, name="Quarter number")
+# to_frame() supplies the two-dimensional input expected by sklearn.
+X = time.loc[analysis.index].to_frame()
+baseline = LinearRegression().fit(X, analysis)
+# Omit dates where the centered decomposition has no trend estimate.
+valid = decomposition.trend.notna()
+trend_model = LinearRegression().fit(X.loc[valid], decomposition.trend.loc[valid])
+baseline_values = pd.Series(baseline.predict(X), index=analysis.index)
+trend_values = pd.Series(trend_model.predict(X), index=analysis.index)
+# Look up the seasonal effect for each date by its calendar quarter.
+seasonal_values = pd.Series(
+    quarter_effects.reindex(analysis.index.quarter).to_numpy(), index=analysis.index
+)
+component_values = trend_values + seasonal_values
+
+fig, ax = plt.subplots(figsize=(11, 4), layout="constrained")
+ax.plot(analysis.index, analysis, color="0.65", label="Observed")
+ax.plot(baseline_values.index, baseline_values, label="Straight line")
+ax.plot(component_values.index, component_values, label="Component model")
+ax.set(title="Model comparison", xlabel="Year", ylabel="Thousand tonnes")
+ax.legend()
+plt.show()
+plt.close(fig)
+
+train = cement.loc[:'2007-10-01']
+test = cement.loc['2008-01-01':]
+
+display(train.tail())
+display(test.head())
+
+decomp_train = seasonal_decompose(
+    train,
+    model="additive",
+    period=4
+)
+
+# manual seasonal effects
+valid = decomp_train.trend.notna()
+
+manual_trend = decomp_train.trend.dropna()
+
+detrended = train.loc[manual_trend.index] - manual_trend
+
+quarter_effects = detrended.groupby(
+    detrended.index.quarter
+).mean()
+
+quarter_effects -= quarter_effects.mean()
+
+display(quarter_effects)
+
+time = pd.Series(
+    np.arange(len(cement), dtype=float),
+    index=cement.index,
+    name="Quarter number"
+)
+
+X_train = time.loc[train.index].to_frame()
+X_test = time.loc[test.index].to_frame()
+
+# Time-only regression
+baseline = LinearRegression()
+baseline.fit(X_train, train)
+
+# Component trend regression
+trend_model = LinearRegression()
+trend_model.fit(
+    X_train.loc[valid],
+    decomp_train.trend.loc[valid]
+)
+
+baseline_forecast = pd.Series(
+    baseline.predict(X_test),
+    index=test.index,
+    name="Time-only"
+)
+
+trend_forecast = pd.Series(
+    trend_model.predict(X_test),
+    index=test.index
+)
+
+seasonal_forecast = pd.Series(
+    quarter_effects.reindex(test.index.quarter).to_numpy(),
+    index=test.index
+)
+
+component_forecast = pd.Series(
+    trend_forecast + seasonal_forecast,
+    index=test.index,
+    name="Component"
+)
+
+predictions = pd.DataFrame({
+    "Time-only": baseline_forecast,
+    "Component": component_forecast
+})
+
+scores, errors = score_forecasts(test, predictions)
+
+display(scores.round(2))
+display(errors.round(2))
+
+fig, ax = plt.subplots(figsize=(10,4))
+
+ax.plot(test.index, test,
+        marker='o',
+        label='Actual')
+
+ax.plot(
+    baseline_forecast.index,
+    baseline_forecast,
+    marker='o',
+    label='Time-only'
+)
+
+ax.plot(
+    component_forecast.index,
+    component_forecast,
+    marker='o',
+    label='Component'
+)
+
+ax.set(
+    title="Forecasts for 2008-2009",
+    ylabel="Thousand tonnes"
+)
+
+ax.legend()
+
+plt.show()
+quarter
+2006-10-01    2451.0
+2007-01-01    2140.0
+2007-04-01    2362.0
+2007-07-01    2536.0
+2007-10-01    2562.0
+Freq: QS-JAN, Name: production_thousand_tonnes, dtype: float64
+quarter
+2008-01-01    2183.0
+2008-04-01    2558.0
+2008-07-01    2612.0
+2008-10-01    2373.0
+2009-01-01    1963.0
+Freq: QS-JAN, Name: production_thousand_tonnes, dtype: float64
+quarter
+1   -158.658088
+2     33.900735
+3     77.687500
+4     47.069853
+dtype: float64
+MAE	RMSE	Mean error
+Time-only	180.22	213.51	-40.4
+Component	149.95	170.71	-25.7
+Time-only	Component
+quarter		
+2008-01-01	-120.43	52.65
+2008-04-01	242.33	222.93
+2008-07-01	284.09	220.98
+2008-10-01	32.84	0.44
+2009-01-01	-389.40	-216.00
+2009-04-01	-204.64	-223.72
+2009-07-01	-51.89	-114.67
+2009-10-01	-116.13	-148.22
+
+Manager’s comment: Which observations were used to fit these models? Generate time-only regression and classical-component forecasts for the same eight withheld quarters of 2008–2009, using only information available through 2007 Q4. Compare MAE and RMSE, show actuals and forecasts together, and examine the direction or timing of errors as well as the averages. What assumptions about the future trend and seasonal pattern are built into the component forecast? Use your results to discuss where those assumptions may be questionable.
+
+The inherited models were fit using all observations from 1990-2009 because analysis = cement. That uses information from the evaluation period and is not a valid forecasting exercise. I rebuilt both models using only data through 2007 Q4 and evaluated forecasts on the eight withheld quarters from 2008-2009.
+
+The time-only regression forecasts a straight-line trend into the future, assuming production will continue to increase at a constant rate. The component forecast assumes both a linear trend and the historical quarterly seasonal pattern will continue unchanged. When evaluated on the withheld observations, the component model outperformed the time-only regression:
+
+| Model | MAE | RMSE | | --- | :---: | :---: | | Time-only | 180.22 | 213.51 | | Component | 149.95 | 170.71 |
+
+The component model produced lower average and squared forecast errors, indicating that accounting for seasonality improved forecast accuracy. Both models tended to overpredict during 2009 (negative mean error), suggesting that actual production declined relative to the historical trend. Errors became especially large around 2009 Q1, when both models substantially missed the sharp drop in production. This suggests that extrapolating the historical trend and seasonal pattern may be questionable when economic conditions change. Although the component model performed better on this evaluation period, its forecasts rely on the assumption that both the trend and seasonal effects observed before 2008 remain stable into the future.
+
+Draft Recommendation
+
+The analysis provides a robust, validated basis for the briefing. The component model follows the quarterly movements much better than the straight line, so it is the recommended forecasting approach. Seasonal effects explain the recurring variation, and the remaining changes show that the late-2006 decline was genuine. The model is ready to use for planning.
+
+Manager’s comment: Correct unsupported claims in the inherited recommendation. Explain how decomposing or reconstructing observed production differs from demonstrating forecast accuracy, using evidence from your completed analysis. Then summarize the most important findings about recent activity and forecasting, give a recommendation supported by those findings and their limitations, and identify the next evidence needed before relying on the forecasts for planning. Your response is the completed briefing; refer to the results above rather than repeat the full analysis.
+
+The inherited recommendation overstates what the analysis demonstrates. Decomposing the historical series and reconstructing observed production shows that trend and seasonal components describe past behavior well, but that alone does not establish forecast accuracy. Forecast accuracy must be evaluated on data that were not used to fit the model.
+
+The decomposition results show that cement production exhibits a long-term upward trend and a strong quarterly seasonal pattern. However, after correcting the seasonal-adjustment calculation and comparing classical decomposition with STL, the evidence for a substantial underlying decline from 2006 Q4 to 2007 Q1 became much weaker. The large observed drop was largely explained by normal seasonal effects, and STL suggested almost no underlying decline after seasonal adjustment.
+
+Using only data through 2007 Q4, the component forecast performed better than the time-only regression on the eight withheld quarters of 2008-2009. The component model achieved lower error measures (MAE = 149.95, RMSE = 170.71) than the time-only model (MAE = 180.22, RMSE = 213.51), indicating that incorporating seasonality improved forecast accuracy during the evaluation period.
+
+I recommend the component model over the time-only regression because it produced more accurate forecasts on the withheld data. However, both models substantially missed the sharp decline around 2009, suggesting that the assumptions of a continuing linear trend and stable seasonal pattern may not hold during changing economic conditions. Before relying on these forecasts for planning, additional evidence is needed from a longer validation period and from forecasting methods that can better account for changing trends and economic shocks.
+
+Check and Submit
+
+Submit one completed .ipynb containing the revised analysis, code, results, figures, responses to the manager explaining and verifying your changes, the completed briefing in Draft Recommendation, and assistance disclosure. You may reorganize the notebook; variable names and figure layouts need not match any reference. Preserve useful context, but do not leave unsupported inherited claims presented as your final conclusions. No separate CSV, report, or screenshot is required.
+
+Restart the runtime and run the notebook in order. Retain outputs and check that your explanations agree with them. Download the completed .ipynb for submission.
+
+Evaluation	Points
+Temporal patterns and decomposition interpretation	1.0
+Seasonal adjustment, STL cross-check, and interpretation of changes	2.5
+Joint dependence check and interpretation	1.5
+Valid forecast comparison, error interpretation, and recommendation	3.5
+Explanation and verification of consequential revisions	1.0
+Reproducibility and assistance disclosure	0.5
+Total	10.0

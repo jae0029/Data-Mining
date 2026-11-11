@@ -1,0 +1,210 @@
+\documentclass[10pt]{article}
+\usepackage[letterpaper,landscape,margin=0.20in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern,microtype,xcolor,multicol,amsmath,amssymb,array,tabularx}
+\pagestyle{empty}
+\definecolor{navy}{HTML}{17365D}\definecolor{blue}{HTML}{1F4E78}\definecolor{green}{HTML}{006100}\definecolor{red}{HTML}{9C0006}\definecolor{gold}{HTML}{7F6000}
+\setlength{\parindent}{0pt}\setlength{\parskip}{0pt}\setlength{\columnsep}{0.09in}\setlength{\columnseprule}{0.12pt}
+\newcommand{\T}{\fontsize{5.25}{4.58}\selectfont}
+\newcommand{\topic}[1]{\vspace{1.2pt}{\color{blue}\bfseries\fontsize{5.8}{6.0}\selectfont #1}\par\vspace{0.2pt}}
+\newcommand{\key}[1]{\textcolor{green}{\textbf{#1}}}
+\newcommand{\trap}[1]{\textcolor{red}{\textbf{#1}}}
+\newcommand{\code}[1]{\texttt{#1}}
+\newcommand{\hdr}[2]{\begin{center}{\color{navy}\bfseries\fontsize{10.5}{10.5}\selectfont INSY 7130 TEST 2 COMPLETE NOTES -- PAGE #1 OF 2}\\[-1pt]{\color{green}\bfseries\fontsize{5.5}{5.8}\selectfont #2}\end{center}\vspace{-4pt}}
+\newcommand{\bitem}{\par\hangindent=0.08in\hangafter=1\textbullet\,}
+\begin{document}
+\hdr{1}{05a EMBEDDINGS $\bullet$ 06b--08a CLUSTERING $\bullet$ REPRESENTATION, FITTING, DIAGNOSTICS, VALIDATION}
+\begin{multicols*}{4}\T
+\topic{COURSE LOGIC + REPRESENTATION}
+\bitem Driving question: can structure in observations help a decision, and can it survive credible challenges? Start with uncertainty, useful pattern, method/choices, validation, and action. Evidence supports a claim; an algorithmic result is not proof.
+\bitem Neighbors answer ``which past cases resemble this one?'' Clustering organizes the whole set. Anomaly detection prioritizes departures. Time series studies ordered change/forecasting.
+\bitem Numbers define similarity. Nominal integer codes invent order/gaps; one-hot makes all category mismatches equally distant. Ordinal codes preserve order but may imply equal spacing. Feature choice, scaling, weights, and metric determine geometry.
+\bitem Euclidean $d(x,y)=\sqrt{\sum_j(x_j-y_j)^2}$; cosine $=x^Ty/(\|x\|\|y\|)$. For unit vectors, dot product = cosine. High semantic similarity can support retrieval but not necessarily an operational claim (e.g., negation).
+
+\topic{05a: DIMENSION + MANIFOLDS}
+\bitem Ambient dimension = supplied measurements; intrinsic = local degrees of freedom; output = requested coordinates. Asking for a 2-D map does not establish intrinsic dimension 2.
+\bitem A manifold is locally describable by ordinary coordinates even if globally bent. Linear projection can collapse separate folds; neighbor paths may trace curvature, but noise, sparse sampling, and nearby folds can create false connections.
+\bitem Rotation/reflection/translation changes coordinates but preserves Euclidean distances/neighbors. Compare relationships, not orientation.
+
+\topic{PCA, t-SNE, UMAP}
+\bitem PCA: shared linear directions maximizing retained variance; scores are projections; loadings and explained-variance ranking exist; fitted PCA can transform new rows. It can lose nonlinear neighborhood structure.
+\bitem t-SNE: convert input distances to directional Gaussian neighbor probabilities $p_{j|i}$; adjust each width to a requested perplexity; symmetrize pairs; initialize output (often PCA); use heavy-tailed Student-$t$ output weights $w_{ij}=1/(1+\|y_i-y_j\|^2)$; iteratively minimize mismatch using attraction when $p>q$ and repulsion when $q>p$.
+\bitem Perplexity = equivalent number of equally likely neighbors; larger means broader input neighborhoods, not more/fewer clusters. Exact layout depends on seed, initialization, optimization, and settings. sklearn \code{TSNE.fit\_transform}; no \code{transform} for future rows.
+\bitem UMAP: find input neighbors $\to$ weighted local graph $\to$ optimize low-dimensional layout. \code{n\_neighbors} changes graph breadth; \code{min\_dist} changes output packing, not graph edges and is not a strict pairwise minimum. \code{umap-learn} can transform future rows.
+\trap{Map traps:} Clear islands, sizes, densities, and global separations do not prove natural clusters or faithful global distances. t-SNE/UMAP axes have no direct feature meaning.
+
+\topic{EMBEDDING VALIDATION}
+\bitem Top-$k$ retention for row $i$: $|N_k^{in}(i)\cap N_k^{map}(i)|/k$; average across rows and inspect individual records. ``Best'' depends on what must be preserved and whether future placement is required.
+\bitem Check original images/text, reasonable settings, seeds, samples, and independent data. Stability is useful but does not prove relevance.
+\bitem Label-agreement statistic: mean fraction of each row's fixed input neighbors sharing its label. Permutation null: labels exchangeable while vectors/neighbors stay fixed. One-sided Monte Carlo $p=(1+\#\{T_b\ge T_{obs}\})/(B+1)$. Preserve writers/entities/blocks if exchangeability requires restricted shuffling.
+\bitem Small $p$ supports label association in original representation, not ten natural clusters, a correct map, or a best method.
+
+\columnbreak
+\topic{K-MEANS OBJECTIVE + FIT}
+\bitem Request $K$; initialize centers; assign each row to nearest center; replace each center with assigned mean; repeat until center movement $<$ \code{tol} or \code{max\_iter}. Each assignment/update reduces or preserves
+$W=\sum_i\|x_i-\mu_{c(i)}\|^2$ (inertia/SSE).
+\bitem \code{k-means++} favors initial rows far from chosen centers; \code{random} samples rows. Later centers are means and need not be observed. \code{n\_init} runs complete fits and retains lowest final inertia, not best initial inertia or most frequent partition. \code{random\_state} reproduces random choices; defaults in course version: $K=8$, \code{max\_iter=300}, \code{tol=.0001}, algorithm Lloyd.
+\bitem Learned: \code{labels\_}, \code{cluster\_centers\_}, \code{inertia\_}, \code{n\_iter\_}. \code{predict} assigns nearest fitted centroid; \code{transform} returns distances to centers. Reuse fitted preprocessing.
+\bitem \code{StandardScaler}: $z=(x-\bar x)/s$. Scaling changes nearest centers/boundaries; it prevents numerical-unit dominance but does not prove equal substantive importance.
+\bitem Example $\{1,2,8,9\}$, start centers 1,2: inertia 85; settled centers 1.5,8.5, inertia 1.
+\trap{Limits:} Forces every row into a group; favors compact/roughly spherical groups; outliers pull means; labels/colors arbitrary; $K=3$ may split one wide population rather than reveal a third population; near-equal inertia can encode very different operational stories.
+
+\topic{CHOOSING K}
+\bitem Inertia cannot select $K$: it never increases as centers are added. Elbow seeks diminishing improvement and can be ambiguous.
+\bitem Silhouette: $a(i)$ mean distance to own cluster; $b(i)$ smallest mean distance to another; $s(i)=[b-a]/\max(a,b)$. Near 1 separated; near 0 overlap; negative closer to another cluster; undefined for $K=1$. Mean silhouette rewards compact separated groups and may undervalue curves.
+\bitem Gap: $\mathrm{Gap}(k)=B^{-1}\sum_b\log W^*_{kb}-\log W_k$; $s_k=SD(\log W^*_{kb})\sqrt{1+1/B}$. Choose first $k$ with $\mathrm{Gap}(k)\ge\mathrm{Gap}(k+1)-s_{k+1}$. Depends on no-group reference; bars are simulation allowances, not CIs; not a $p$-value or proof of true $K$.
+\bitem If scores are close, prefer simpler $K$ unless an added group is stable, interpretable, and changes a useful action. Inspect members/profiles/original features/new period.
+
+\topic{HIERARCHICAL CLUSTERING}
+\bitem Agglomerative: one cluster/row; repeatedly merge closest current pair under linkage; record children, height, size; continue to one. Greedy/irreversible; early merges cannot be undone; a cut need not globally optimize its cluster count.
+\bitem Single=min cross-pair distance (connected/elongated; chaining); complete=max (keeps all members relatively close); average=mean cross-pair; Ward=smallest increase in within-cluster SSE (Euclidean; compact).
+\bitem Example $d(A,C)=3.16$, $d(B,C)=2.24$: single 2.24, average 2.70, complete 3.16. Merge height is linkage value, not every within-cluster pair distance.
+\bitem Dendrogram leaves=observations, vertical joins=linkage values; horizontal leaf spacing is layout only. Follow branches. Horizontal cut gives flat groups. Cuts of one tree are nested; separate K-means fits need not be.
+
+\columnbreak
+\topic{HIERARCHICAL SOFTWARE/CUTS}
+\bitem SciPy \code{linkage(X,method,metric)} returns $(n-1)\times4$ rows: child 1, child 2, height, number of original rows. Original IDs $0\ldots n-1$; new IDs start at $n$. \code{dendrogram} draws existing history.
+\bitem \code{fcluster(...,criterion="distance")} uses $t$ as height. \code{maxclust} finds a threshold producing at most $t$ clusters; ties may give fewer. \code{cut\_tree(...,n\_clusters=k)} follows merge order to request a count. Other criteria: \code{inconsistent}, \code{monocrit}, \code{maxclust\_monocrit}.
+\bitem Fixed data/order, representation, metric, linkage, and implementation are deterministic, though tied distances can admit different merge orders. Cluster labels are arbitrary.
+\bitem No built-in \code{predict}/decision boundary for future rows in ordinary agglomerative clustering; add a separate rule or refit/reassess.
+
+\topic{DBSCAN}
+\bitem Density-Based Spatial Clustering of Applications with Noise. \code{eps}=radius; points exactly at radius count. \code{min\_samples}=required neighborhood count including self.
+\bitem Core: count $\ge$ minimum. Border: non-core within \code{eps} of a core. Noise: neither, sklearn label $-1$. Clusters grow through connected cores, then absorb adjacent borders. \trap{Border is not a bridge:} it joins but cannot extend to its neighbors.
+\bitem Larger \code{eps}: more neighbors, less noise, possible merging. Smaller: fragmentation/more noise. Larger \code{min\_samples}: harder core status/more noise. Scaling/metric change neighborhoods.
+\bitem Strength: irregular/curved connected regions and explicit noise; endpoints can be farther than \code{eps} via core chains. Weakness: one global density rule struggles with groups of unequal density. Seek a stable parameter range, not one attractive image.
+\bitem Learned: \code{labels\_}, \code{core\_sample\_indices\_}. Noise may be error, rare legitimate case, or parameter artifact. No built-in sklearn prediction rule for new rows.
+
+\topic{GAUSSIAN MIXTURE MODELS}
+\bitem $p(x)=\sum_{g=1}^G\pi_g\mathcal N(x|\mu_g,\Sigma_g)$, $\pi_g\ge0$, $\sum_g\pi_g=1$. Posterior $P(g|x)=\pi_g\mathcal N_g(x)/\sum_h\pi_h\mathcal N_h(x)$.
+\bitem EM: initialize means/covariances/weights; E-step membership probabilities; M-step weighted parameter updates; repeat until likelihood improvement is small/limit. Multiple starts retain highest likelihood. Check \code{converged\_}, \code{n\_iter\_}.
+\bitem \code{predict\_proba} preserves soft membership; \code{predict} gives argmax hard label. A 0.516/0.484 label is ambiguous. High relative membership can occur where all components have low absolute density.
+\bitem Covariance: full=own tilt/shape/size; tied=one shared covariance; diag=own axis-aligned variances; spherical=one variance/component. For $p$ features, full has $p(p+1)/2$ values/component; diag $p$; spherical 1; tied one shared full matrix.
+\bitem Extra components may approximate skew/non-Gaussian shape rather than identify populations. Ellipses show component spread/equal density, not hard boundaries or confidence intervals. Fitted weights need not equal hard-label fractions.
+
+\topic{METHOD SELECTION}
+\bitem K-means: compact center-based groups + future nearest-center assignment. Hierarchical: nested resolutions/merge history. DBSCAN: irregular dense connectivity + noise. GMM: overlapping elliptical distributions + uncertainty. Method output never establishes causality, a ``real'' population, or useful action by itself.
+
+\columnbreak
+\topic{CLUSTER VALIDATION + INFERENCE}
+\bitem Internal geometry (inertia/silhouette/gap) is not truth/usefulness. Inspect members, profiles, geometry, added distinctions, settings/features/starts/samples, external outcomes, another period, and domain knowledge.
+\bitem ARI compares pairwise co-membership ignoring label numbers: 1 identical; about 0 chance agreement; negative below chance. Subsampling (e.g., 80\% rows) checks sensitivity within observed data, not independent replication. Initialization and observation stability answer different questions.
+\bitem 	rap{Double dipping:} clustering on $x$, then ordinary $t$-testing cluster means on $x$, reuses the same information; K-means constructed separation. Tiny naive $p$ can arise from one Gaussian population. Simple holdout assignment on the same features may still create differences by construction; shuffling final labels omits cluster selection.
+\bitem Valid reference comparison: predefine features/statistic/null; simulate complete datasets under justified reference; repeat all preprocessing, clustering, count/feature search in each; compare observed statistic. Example ratio $W_{K=2}/W_{K=1}$, smaller = stronger split. Parametric bootstrap from fitted one-Gaussian reference includes refitting K-means.
+\bitem Monte Carlo tail $(1+\#\{T_b\text{ as/extremer}\})/(B+1)$. Evidence against one Gaussian does not prove exactly two populations; skew/heavy tails may also reject reference. Formal test needs calibrated false-positive behavior.
+\bitem If many methods/settings were tried and only the strongest reported, simulate the search or use fresh evaluation data. Several geometry scores are not independent confirmation.
+
+\topic{HIGH-YIELD CLUSTER TRAPS}
+\bitem Cluster IDs/colors have no stable cross-fit meaning; compare memberships/profiles. Stable/separated $\ne$ causal/real/useful. Changing representation, scale, distance, linkage, $K$, density settings, covariance, or reference changes the fitted evidence. A later threshold only selects from fixed scores.
+\bitem K-means and GMM use starts; DBSCAN outputs count; hierarchy builds once then cuts; K-means retains lowest inertia; GMM highest likelihood. K-means/ordinary hierarchy assign all observed rows; DBSCAN may label noise; GMM probabilities cover all components.
+\end{multicols*}
+\newpage
+\hdr{2}{09b--10a ANOMALY DETECTION $\bullet$ 11a--12a TIME SERIES, DECOMPOSITION, DEPENDENCE, FORECASTING}
+\begin{multicols*}{4}\T
+\topic{ANOMALY FOUNDATIONS}
+\bitem A detector converts a chosen meaning of unusualness into a score. Reference defines unusual: mixed collection vs new readings against accepted healthy baseline (novelty). Check load/design/environment comparability.
+\bitem Point anomaly: one row departs. Contextual: unusual only within condition/regime. Collective: relationship/joint pattern is unusual even when individual values are familiar.
+\bitem SCORE = method-specific unusualness; RULE = threshold/rank/budget; FLAG = selected for follow-up; FAULT/OUTCOME = independently established condition. Do not equate them.
+\bitem Workflow: define target/reference $\to$ features/scale $\to$ fit $\to$ orient scores $\to$ choose rule from costs/capacity $\to$ investigate records/context/sensors $\to$ evaluate external outcomes/new data.
+
+\topic{LOF FORMULAS + INTERPRETATION} 
+\bitem For point $p$, $N_k(p)$ excludes self. $r_k(o)$ is the distance from neighbor $o$ to its $k$th-nearest other point. 
+
+\vspace{2ex} % <--- Move up/down to control the space BEFORE the formula box
+{\centering
+\setlength{\abovedisplayskip}{0pt}      % Strips LaTeX's automatic top math padding
+\setlength{\belowdisplayskip}{0pt}      % Strips LaTeX's automatic bottom math padding
+\setlength{\abovedisplayshortskip}{0pt}
+\setlength{\belowdisplayshortskip}{0pt}
+% \fontsize{6}{6}\selectfont 
+\begin{align*}
+\operatorname{reach}_k(p,o) &= \max\{d(p,o),r_k(o)\} \\[0.5ex]
+\operatorname{lrd}_k(p) &= \left[\frac1{|N_k(p)|}\sum_{o\in N_k(p)}\operatorname{reach}_k(p,o)\right]^{-1} \\[0.5ex]
+\operatorname{LOF}_k(p) &= \frac{|N_k(p)|^{-1}\sum_{o\in N_k(p)}\operatorname{lrd}_k(o)}{\operatorname{lrd}_k(p)}
+\end{align*}
+\par}
+\vspace{4ex} % <--- THIS WILL NOW WORK: Controls the space AFTER the formulas
+
+\bitem Reachability is directional because receiving neighbor $o$ supplies its radius. It raises short distances to neighbor scale. LOF near 1=comparable local support; $>1$=lower local density than neighbor average. Absolute sparsity alone need not be locally unusual.
+\bitem Seven values $0,1,3,10,50,60,80$, $k=2$: for 10, neighbors 3,1; reaches 7,9; lrd=.125; neighbor lrds .400,.333; LOF=2.933. For 80, reaches 20,30; lrd=.04; neighbor comparison gives LOF=.917. Changing to $k=3$ moves priority toward wide group (about 2.718) and 10 falls to .953.
+\bitem $k$ defines comparison scale and can reverse ranking. Scaling, features, and metric change neighborhoods. sklearn stores negative LOF: larger-unusual convention is \code{-negative\_outlier\_factor\_}. \code{kneighbors()} returns ordinary distances; reachability occurs internally.
+\bitem For unseen rows fit \code{LocalOutlierFactor(novelty=True)} on accepted reference; transform with reference scaler; score unseen only. Novelty calls do not reproduce training-collection scores.
+
+\topic{ISOLATION FOREST}
+\bitem In each current node choose a feature randomly, then a threshold uniformly between that feature's current min/max; split and repeat. Root/path/leaf; path length counts splits from zero. Wide adjacent gaps/endpoints provide many isolating cuts.
+\bitem Forest averages randomized trees, often built from row samples. Short average path = easy isolation = high anomaly score after sample-size normalization; score near .5 roughly matches reference path length, not 50\% fault probability. Leaves may contain multiple rows; scoring estimates remaining path.
+\bitem \code{n\_estimators}=trees; \code{max\_samples}=rows/tree; \code{random\_state}=repeatability. More trees reduce dependence on one random sequence. A row can be scored through a tree even if not sampled to build it.
+\bitem sklearn \code{score\_samples}: lower = more anomalous; use negative for larger-unusual. LOF asks ``less locally supported than neighbors?'' Isolation Forest asks ``easy to isolate?'' Thus 10 leads LOF while endpoint 80 leads isolation.
+\bitem LOF distances usually need deliberate scaling. Isolation Forest splits one feature at a time; linear unit changes preserve corresponding split positions, so standardization is generally unnecessary.
+
+\columnbreak
+\topic{THRESHOLDS, BUDGETS, METRICS}
+\bitem Lower threshold with larger-unusual scores can only preserve/add flags; workload and recall cannot decrease; precision may rise or fall. Scores/ranking stay fixed. Do not share a numerical cutoff across LOF and isolation scales.
+\bitem Fixed budget: rank and review top $N$; cutoff varies by collection. Fixed numerical threshold: workload varies. State tie rule because score ties may select $>N$. \code{contamination} sets a training cutoff/expected fraction; in lecture implementations it changes flags/\code{offset\_}, not raw training scores or reference membership.
+\bitem TP=flag+outcome; FP=flag+no outcome; FN=no flag+outcome; TN=no flag+no outcome. Precision $=TP/(TP+FP)$; recall $=TP/(TP+FN)$; specificity $=TN/(TN+FP)$; FPR $=FP/(FP+TN)$; $F_1=2PR/(P+R)$.
+\bitem Checking only flagged cases can estimate precision, but recall needs total positives or representative review of unflagged cases. Three flags do not imply three faults; unusual healthy cases may reveal a new regime.
+
+\topic{10a WINE EXAMPLE + VALIDATION}
+\bitem UCI data: 1,599 red and 4,898 white wines; 11 chemistry features + sensory quality. Use red reference; 150 mg/L total sulfur dioxide exceeds about 99.4\% of red but only 63.1\% of white values. Pooling obscures context. Quality excluded from detector inputs.
+\bitem Standardize chemistry; LOF $k=20$; Isolation Forest 300 trees, \code{max\_samples=256}. At budget 50, respective cutoffs about 1.506 and .554; both flag 50, only 19 overlap. Detector choice changes investigations.
+\bitem Define low rating $\le4$: 63/1599. LOF top 50 gives TP=7, FP=43, FN=56, TN=1493; precision 14\%, recall 11.1\%. Increasing LOF review to 100 adds 3 low-rated +47 others: precision 10\%, recall 15.9\%. Low rating is an external proxy, not identical to chemical abnormality/fault.
+\bitem Random-review null: choose 50 distinct records uniformly; expected low-rated $50(63)/1599=1.97$. Hypergeometric
+$P(X\ge x)=\sum_{j=x}^{\min(n,K)}{\binom Kj\binom{N-K}{n-j}}/{\binom Nn}$.
+For $x=7$, exact one-sided $p\approx.00275$ (20,000 simulation estimate .00265). Supports association for fixed procedure, not causation, every flag, completeness, optimality, or future generalization.
+\bitem Sensitivity: LOF $k=10$ vs 20 at budget 50 changes 17 selections; low-rated found falls 7 to 4. Compare methods at equal workload; freeze chosen procedure before fresh evaluation.
+
+\topic{CONTAMINATION + MASKING}
+\bitem Reference contamination: target-abnormal behavior influences fitted reference. Masking: similar abnormalities support each other and become less unusual.
+\bitem Demo: keep background + focal remote row fixed; remote group size 5 $\to$ 30 with LOF $k=20$: focal LOF about 6.19 $\to$ 1.01 because all 20 neighbors can become remote peers. LOF rank 5/205 $\to$125/230; Isolation Forest rank 2/205 $\to$25/230.
+\bitem More flags/changed \code{contamination} do not cure masking because raw relationships are unchanged. Use accepted-normal reference, regime-specific comparisons, provenance checks, robust features, temporal holdout, and sensitivity to reference composition; investigate groups of anomalies.
+
+\columnbreak
+\topic{NEW-DATA EVALUATION}
+\bitem Freeze features, scaler, reference model, and budget/threshold; score separate collection without outcomes; select; then reveal outcomes and compare with same-size random review. Keep repeated/related records together. If only reviewed outcomes exist, estimate precision but sample unreviewed rows to assess misses/recall.
+\bitem Isolation Forest scores new rows through fixed trees. LOF needs \code{novelty=True}. Scoring preserves reference; refitting updates it and can introduce masking. Decide deliberately when new behavior enters reference.
+
+\topic{TIME INDEX + MOVING AVERAGES}
+\bitem Parse with explicit date format; sort; require unique labels, no missing values, and expected complete calendar (e.g., \code{date\_range(...,freq="QS"/"MS")}). A row lag equals a time lag only with verified spacing. Dates may label intervals (quarter start), not point measurements.
+\bitem \code{.loc["1992"]} selects a year; partial date slices include endpoints. \code{shift(h)} aligns earlier values; initial unavailable pairs are NaN.
+\bitem Trailing $m$-MA uses current/prior rows. Centered MA uses observations before/after and produces endpoint NaNs. Example centered 3-MA $(443+410+420)/3=424.33$. Centered windows use future values and leak in real-time forecasting.
+
+\topic{ADDITIVE DECOMPOSITION}
+\bitem $y_t=T_t+S_t+R_t$ (trend-cycle, seasonal, remainder, original units). Fitted $\hat y_t=T_t+S_t$; $R_t=y_t-\hat y_t$. Reconstruction is exact by remainder definition, not evidence of forecast accuracy/causality.
+\bitem Manual classical workflow: moving-average trend; detrend; average departures by season; repeat seasonal effects; remainder. Trailing annual MA lags and loses first $m-1$ rows. Classical \code{seasonal\_decompose(y,model="additive",period=12)} uses centered trend, fixed seasonal effects adjusted to mean zero, and endpoint gaps (monthly even period: six at each end).
+\bitem Fixed seasonality, complete-window loss, and outlier influence are limitations. Components estimated on full history are descriptive historical fits, not forecasts.
+\bitem STL = Seasonal and Trend decomposition using Loess; alternates local smoothers. \code{STL(y,period=12,seasonal=13,robust=True)}: period=cycle length; odd seasonal window smooths across same-month occurrences; robust reweighting reduces influence of large remainders. Endpoints estimated with less-balanced local support. Flexible components are not uniquely true.
+\bitem Seasonal adjustment: $y_t^{adj}=y_t-S_t=T_t+R_t$; keeps original units/level and unusual departures while removing recurring pattern. It is not seasonal differencing.
+
+\topic{LAGS + ACF}
+\bitem Lag $h$ compares $y_t$ with $y_{t-h}$; for complete quarterly data, lag 4=same quarter prior year. Lag plot x=earlier, y=current. Seasonal positive ACF often appears at multiples of period; opposite seasons may be negative; trend can create persistent positive ACF.
+\bitem Sample ACF $r_h=\frac{\sum_{t=h+1}^{T}(y_t-\bar y)(y_{t-h}-\bar y)}{\sum_{t=1}^{T}(y_t-\bar y)^2}$. One full-series mean/denominator differs slightly from Pearson correlation on shortened pairs. ACF measures linear dependence.
+\bitem White noise: mean 0, constant finite variance, zero ACF at all nonzero lags; iid is sufficient, not necessary. Approx pointwise 95\% bounds $\pm1.96/\sqrt T$; many inspected lags increase chance crossings. Inside bands/zero ACF does not prove independence.
+
+\columnbreak
+\topic{STATIONARITY + DIFFERENCING}
+\bitem Stationary: joint distribution unchanged by time shift; changing mean, spread, or fixed seasonality violates it. Stationary series may still be dependent. Constant expected level is insufficient: random walk $y_t=y_{t-1}+e_t$ has variance growing with time; levels share accumulated history.
+\bitem Ordinary difference $\Delta y_t=y_t-y_{t-1}$ = change per observation interval; \code{diff()} loses first row. Random-walk differencing recovers increments; current level is simple forecast if expected next increment is zero.
+\bitem Seasonal difference $\Delta_m y_t=y_t-y_{t-m}$; monthly annual \code{diff(12)} loses first 12. Seasonal adjustment subtracts estimated $S_t$ and retains level; seasonal difference subtracts observed prior season and produces change.
+\bitem Log seasonal difference $\log y_t-\log y_{t-m}=\log(y_t/y_{t-m})$; .10 means ratio $e^{.10}=1.105$, about 10.5\% growth. Logs can stabilize proportional seasonal swings.
+\bitem Inspect time plot + ACF after transformation. Remaining ACF can be useful stationary dependence. Unnecessary differencing can introduce dependence. Second ordinary difference is change in first differences, not lag-2 difference.
+\bitem Ljung--Box null at $H$: population ACFs at lags $1\ldots H$ jointly zero. \code{acorr\_ljungbox(x,lags=[10])} gives one joint test through 10. Small $p$ rejects; large $p$ means compatible, not proof of independence/white noise (Google changes example $p\approx.637$).
+
+\topic{FORECAST DESIGN}
+\bitem Chronological split: training ends before test. In lecture, train through June 2019; test July 2019--June 2024 (60 months). Every data-dependent step must fit on training only.
+\bitem Baseline: time-only \code{LinearRegression} on elapsed month, ignoring seasonality. A more complex forecast must improve on the same withheld dates.
+\bitem Classical component forecast: decompose training only; fit linear regression to available trend-cycle; extrapolate month numbers; repeat training seasonal averages; add trend + seasonal. Assumes trend and fixed seasonal pattern persist; training trend $R^2\approx.35$; five-year MAPE about 3.81\% in example, with sustained post-2019 level miss.
+\bitem \code{STLForecast(training,ARIMA,order=(1,1,0),trend="t",period=12, seasonal=13, robust=True)}: STL seasonality + supplied model for adjusted series + seasonal forecast. Not equivalent to classical+linear trend; both decomposition and extrapolation differ.
+\bitem Error $e_t=y_t-\hat y_t$. 
+\bitem MAE $=n^{-1}\sum|e_t|$ original units; 
+
+\bitem RMSE $=\sqrt{n^{-1}\sum e_t^2}$ emphasizes large misses; 
+
+\bitem MAPE $=100n^{-1}\sum|e_t/y_t|$, undefined at zero/unstable near zero.
+
+\bitem Compare methods on identical withheld observations. Average error hides bias, timing, seasonal misses, and degradation by horizon. Evaluate windows (months 1--12, 13--24, 25--60), multiple origins, and relevant horizons. One split does not establish universal superiority.
+
+\topic{LEAKAGE + FINAL TRAPS}
+\bitem Leakage: full-data imputation/scaling/PCA/ decomposition/feature selection; centered rolling features; later-value gap filling; post-decision inspection/repair fields; target proxies hidden in inputs; overlapping sensor windows/repeated entities across split; repeated tuning against test. Fit the complete pipeline inside available training history; group related records; after test-driven changes obtain a fresh final evaluation.
+\trap{Final reminders:} Identify reference/units/time interval; distinguish evidence-changing settings from flag thresholds; read score direction; preserve preprocessing; inspect original records; report what evidence does not prove; do not confuse fit/reconstruction with prediction or association with causation.
+\end{multicols*}
+\end{document}

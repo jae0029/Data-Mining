@@ -1,0 +1,341 @@
+\documentclass[10pt]{article}
+\usepackage[letterpaper,landscape,margin=0.20in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern,microtype,xcolor,multicol,amsmath,amssymb,array,tabularx}
+\pagestyle{empty}
+\definecolor{navy}{HTML}{17365D}
+\definecolor{blue}{HTML}{1F4E78}
+\definecolor{green}{HTML}{006100}
+\definecolor{red}{HTML}{9C0006}
+\definecolor{gold}{HTML}{7F6000}
+\setlength{\parindent}{0pt}\setlength{\parskip}{0pt}\setlength{\columnsep}{0.09in}\setlength{\columnseprule}{0.12pt}
+
+% GLOBAL LINE SPACING INCREASE
+\linespread{1.3}\selectfont % <-- Adjust this value (e.g., 1.05 to 1.15) to tune line spacing
+
+\newcommand{\T}{\fontsize{5.32}{4.78}\selectfont}
+\newcommand{\topic}[1]{\vspace{2.5ex}{\color{blue}\bfseries\fontsize{6.0}{6.1}\selectfont #1}\par\vspace{0.1pt}}
+\newcommand{\key}[1]{\textcolor{green}{\textbf{#1}}}
+\newcommand{\trap}[1]{\textcolor{red}{\textbf{#1}}}
+\newcommand{\code}[1]{\texttt{#1}}
+\newcommand{\hdr}[2]{\begin{center}{\color{navy}\bfseries\fontsize{10.5}{10.5}\selectfont INSY 7130 TEST 2A NOTES -- PAGE #1 OF 2}\\[-6pt]{\color{green}\bfseries\fontsize{5.6}{5.9}\selectfont #2}\end{center}\vspace{-25pt}}
+\newcommand{\bitem}{\par\vspace{0.8ex}\hangindent=0.09in\hangafter=1\textbullet\,}
+\begin{document}
+\hdr{1}{LECTURES 06b--08a $\bullet$ CLUSTERING $\bullet$ HW 3a/3b $\bullet$ CONCEPTS, THEORY, PRINCIPLES, LIGHT CODE INTERPRETATION}
+\begin{multicols*}{4}\T
+
+\topic{CLUSTERING: PURPOSE + REPRESENTATION}
+\bitem A clustering is a proposal under chosen observations, features, transforms, scales, distance, method, and settings. Evaluate it for its intended use; an algorithmic result is not proof of natural populations or a decision.
+\bitem Geometry comes from representation. Nominal integer codes invent order/gaps; one-hot makes category mismatches equally distant. Standardization prevents large numerical units from dominating but does not establish equal substantive importance.
+\bitem HW3B: six annual spending features; use $\log(1+x)$ to compress extreme spending, then \code{StandardScaler}. Customer ID is not a feature. Describe groups using original-unit medians and counts. A 2-D Fresh/Grocery plot cannot show all six dimensions.
+\bitem Validation questions: Does structure match the purpose? What does another group add? Does it persist across settings/features/starts/samples? Could a justified one-population reference produce it? Does it relate to external outcomes or another period?
+
+\topic{K-MEANS: OBJECTIVE + FIT}
+\bitem Request $K$; initialize centers; assign each row to nearest center; replace each center with assigned mean; repeat until movement $<$ \code{tol} or \code{max\_iter}. Each step reduces/preserves the within-cluster sum of squares (inertia).
+
+\vspace{-4ex} % <--- Move up/down to control the space BEFORE the formula box
+{\centering
+\setlength{\abovedisplayskip}{0pt}      % Strips LaTeX's automatic top math padding
+\setlength{\belowdisplayskip}{0pt}      % Strips LaTeX's automatic bottom math padding
+\setlength{\abovedisplayshortskip}{0pt}
+\setlength{\belowdisplayshortskip}{0pt}
+\fontsize{6}{6}\selectfont 
+\begin{align*}
+W=\sum_i\lVert x_i-\mu_{c(i)}\rVert^2 \text{ (inertia/SSE)}
+\end{align*}
+\par}
+\vspace{0ex} % <--- Controls the space AFTER the formula
+
+\bitem \code{k-means++} favors initial rows far from chosen centers; \code{random} samples rows. Later centers are means and need not be observed. \code{n\_init} runs complete fits and keeps lowest \emph{final} inertia, not best initial inertia or most common partition. \code{random\_state} reproduces randomized choices.
+\bitem Course-version defaults: $K=8$, \code{max\_iter=300}, \code{tol=.0001}, algorithm Lloyd. Learned: \code{labels\_}, \code{cluster\_centers\_}, \code{inertia\_}, \code{n\_iter\_}. \code{predict} assigns nearest fitted centroid; \code{transform} returns distances to centers. Reuse fitted preprocessing.
+\bitem Example $\{1,2,8,9\}$, start centers 1,2: start inertia $6^2+7^2=85$; settled centers 1.5,8.5; inertia $4(0.5^2)=1$.
+\trap{Limits:} forces all rows into groups; compact/roughly spherical bias; outliers pull means; labels/colors arbitrary; $K=3$ may split one broad population; near-equal inertia may encode different operational stories.
+
+\topic{CHOOSING K}
+\bitem Inertia cannot select $K$: it never increases when centers are added. Elbow seeks diminishing improvement and can be ambiguous.
+\bitem Silhouette: $a(i)$=mean distance to own cluster; $b(i)$=smallest mean distance to another; $s(i)=[b-a]/\max(a,b)$. Near 1 separated; near 0 overlap; negative closer to another cluster; undefined at $K=1$. Mean silhouette favors compact separated groups and may undervalue curved structure.
+\bitem Gap: compares observed inertia to reference (no-group) simulations; choose first $k$ where improvement falls within simulation noise.
+
+\vspace{-2ex} % <--- Move up/down to control the space BEFORE the formula box
+{\centering
+\setlength{\abovedisplayskip}{0pt}      % Strips LaTeX's automatic top math padding
+\setlength{\belowdisplayskip}{0pt}      % Strips LaTeX's automatic bottom math padding
+\setlength{\abovedisplayshortskip}{0pt}
+\setlength{\belowdisplayshortskip}{0pt}
+\fontsize{6}{6}\selectfont 
+\begin{align*}
+    \mathrm{Gap}(k) &= B^{-1}\sum_b\log W^*_{kb}-\log W_k ; \\[0.5ex]
+    s_k &= \text{SD}(\log W^*_{kb})\sqrt{1+1/B} ; \\[0.8ex]
+    &\text{Choose first } k \text{ with } \mathrm{Gap}(k) \ge \mathrm{Gap}(k+1)-s_{k+1}
+\end{align*}
+\par}
+\vspace{2ex} % <--- Controls the space AFTER the formula
+
+\bitem Depends on no-group reference; bars are simulation allowances, not CIs; not a $p$-value/proof of true $K$.
+\bitem Close diagnostics $\Rightarrow$ prefer simpler $K$ unless added group is stable, interpretable, and changes useful action. Inspect counts, profiles, original records, and another period.
+
+\columnbreak
+\topic{HIERARCHICAL CLUSTERING}
+\bitem Agglomerative: one cluster/row; repeatedly merge closest current pair under linkage; record children, height, size; continue to one. Greedy/irreversible; early merges cannot be undone; a cut need not globally optimize its cluster count.
+\bitem Single=min cross-pair (connected/elongated; chaining). Complete=max (keeps all members relatively close). Average=mean cross-pair. Ward=smallest increase in within-cluster SSE (Euclidean; compact).
+\bitem Example $d(A,C)=3.16$, $d(B,C)=2.24$: single 2.24, average 2.70, complete 3.16. Merge height is linkage value, not every within-cluster pair distance.
+\bitem Dendrogram: leaves=observations; vertical joins=linkage values; horizontal spacing is layout only. Follow branches. Horizontal cut gives a flat partition. Cuts of one tree are nested; separate K-means fits need not be.
+\bitem SciPy \code{linkage(X,method,metric)} returns $(n-1)\times4$: child 1, child 2, height, size. IDs $0\ldots n-1$ are rows; new cluster IDs start at $n$. \code{dendrogram} only draws existing history.
+\bitem \code{fcluster(...,criterion="distance")} uses $t$ as height. \code{maxclust} yields at most $t$ groups; ties may yield fewer. \code{cut\_tree(...,n\_clusters=k)} follows merge order to request a count. Labels are arbitrary.
+\bitem Ordinary agglomerative clustering has no built-in \code{predict}/decision boundary for future rows; add a rule or refit/reassess.
+
+\topic{DBSCAN}
+\bitem \code{eps}=radius; points exactly at radius count. \code{min\_samples}=required neighborhood count including self.
+\bitem Core: count $\ge$ minimum. Border: non-core within \code{eps} of a core. Noise: neither; sklearn label $-1$. Clusters grow through connected cores, then absorb borders. \trap{Border is not a bridge:} it joins but cannot extend to its own neighbors.
+\bitem Larger \code{eps}: more neighbors, less noise, possible merging. Smaller: fragmentation/more noise. Larger \code{min\_samples}: harder core status/more noise. Scaling/metric change neighborhoods.
+\bitem Strength: irregular/curved connected regions and explicit noise; endpoints may be farther than \code{eps} via core chains. Weakness: one global density rule struggles with unequal densities. Seek a stable range, not one attractive image.
+\bitem Learned: \code{labels\_}, \code{core\_sample\_indices\_}. Noise may be error, rare legitimate case, or setting artifact. No built-in sklearn new-row prediction rule.
+\key{HW3B radius lesson:} with the same six-feature $X$ and \code{min\_samples=8}, $\epsilon=.8$ gave 2 groups/147 assigned/293 noise; $\epsilon=1.2$ gave 1 group/355 assigned/85 noise. More coverage can erase distinct profiles.
+
+\topic{GAUSSIAN MIXTURE MODELS}
+% \bitem $p(x)=\sum_{g=1}^{G}\pi_g\mathcal N(x\mid\mu_g,\Sigma_g)$, $\pi_g\ge0$, $\sum_g\pi_g=1$. Posterior $P(g\mid x)=\pi_g\mathcal N_g(x)/\sum_h\pi_h\mathcal N_h(x)$.
+
+\vspace{-1ex} % <--- Move up/down to control the space BEFORE the formula box
+{\centering
+\setlength{\abovedisplayskip}{0pt}      % Strips LaTeX's automatic top math padding
+\setlength{\belowdisplayskip}{0pt}      % Strips LaTeX's automatic bottom math padding
+\setlength{\abovedisplayshortskip}{0pt}
+\setlength{\belowdisplayshortskip}{0pt}
+\fontsize{6}{6}\selectfont 
+\begin{align*}
+    p(x)=\sum_{g=1}^{G}\pi_g\mathcal N(x\mid\mu_g,\Sigma_g), \pi_g\ge0, \sum_g\pi_g=1 \\[0.5ex]
+    \mathrm{Posterior}\ P(g\mid x)=\pi_g\mathcal N_g(x)/\sum_h\pi_h\mathcal N_h(x)
+\end{align*}
+\par}
+\vspace{1ex} % <--- Controls the space AFTER the formula
+
+\bitem EM: initialize means/covariances/weights; E-step membership probabilities; M-step probability-weighted parameter updates; repeat until likelihood improvement is small/limit. Multiple starts retain highest likelihood. Check \code{converged\_}, \code{n\_iter\_}.
+\bitem \code{predict\_proba} preserves soft membership; \code{predict} gives argmax label. A .516/.484 label is ambiguous. High relative membership can occur where every component has low absolute density.
+\bitem Covariance: full=own tilt/shape/size; tied=one shared covariance; diag=own axis-aligned variances; spherical=one variance/component. Full has $p(p+1)/2$ covariance values/component; diag $p$; spherical 1.
+\bitem Extra components may approximate skew/non-Gaussian shape, not populations. Ellipses show component spread/equal density, not hard boundaries or mean CIs. Weights need not equal hard-label fractions.
+\key{HW3B ambiguity:} customer 275 probabilities (.306,.261,.432) show a mixed assignment hidden by hard label 2; customer 50 was decisive (.999,.001,.000).
+
+\columnbreak
+\topic{METHOD COMPARISON}
+\bitem K-means: compact center-based groups; requested $K$; hard labels; future nearest-center assignment; retains lowest inertia.
+\bitem Hierarchy: nested resolutions/merge history; linkage and cut determine geometry; deterministic absent ties; future assignment requires extra rule.
+\bitem DBSCAN: irregular density-connected regions + noise; number of groups is output; \code{eps}/\code{min\_samples} critical; does not assign all rows.
+\bitem GMM: overlapping elliptical distributions + uncertainty; requested components; soft probabilities; retains highest likelihood.
+\bitem All depend on representation. Agreement across methods is not independent proof; disagreement should be explained through each method's rule.
+
+\topic{CLUSTER VALIDATION + INFERENCE}
+\bitem Internal geometry (inertia/silhouette/gap) is not truth/usefulness. Inspect members, profiles, added distinctions, settings/features/starts/samples, outside outcomes, another period, and domain knowledge.
+\bitem ARI compares pairwise co-membership while ignoring label numbers: 1 identical; about 0 chance agreement; negative below chance. Subsampling (e.g., 80\%) checks sensitivity within observed data, not independent replication. Initialization and observation stability answer different questions.
+\trap{Double dipping:} clustering on $x$, then ordinary $t$-testing group means on $x$, reuses the same information; K-means constructed separation. Tiny naive $p$ can arise from one Gaussian population. Assigning holdout rows using the same features can still create differences by construction; shuffling final labels omits selection.
+\bitem Valid reference comparison: predefine features/statistic/null; simulate full datasets under justified reference; repeat all preprocessing, clustering, and count/feature search; compare observed statistic. Example $W_{K=2}/W_{K=1}$, smaller=stronger split.
+\bitem Monte Carlo tail: $(1+\#\{T_b\text{ as/extremer}\})/(B+1)$. Evidence against one Gaussian does not prove exactly 2 populations; skew/heavy tails may also reject it. Formal test needs calibrated false-positive behavior.
+\bitem If many methods/settings were tried and strongest reported, simulate the search or use fresh evaluation data. Multiple geometry scores are not independent confirmation.
+
+\topic{CODE + OUTPUT RECOGNITION}
+\bitem \code{StandardScaler().fit(Xtrain)} learns means/SDs; \code{transform} reuses them. \code{fit\_transform} learns and applies to initial data.
+\bitem \code{KMeans(...).fit(X)}: inspect underscore attributes; \code{predict(newX)} uses fixed centers.
+\bitem \code{linkage(X,...)} returns merge array, not estimator. \code{cut\_tree}/\code{fcluster} cut the existing tree; they do not refit.
+\bitem \code{DBSCAN(...).fit(X)}: cluster count excludes $-1$; count noise separately.
+\bitem \code{GaussianMixture(...).fit(X)}; \code{predict\_proba} rows sum to 1; \code{predict} chooses maximum.
+\bitem Be able to infer shapes: $n$ rows, $p$ features; K-means centers $K\times p$; GMM probability output $n\times G$; linkage $(n-1)\times4$.
+
+\topic{PART A QUESTION CHECKLIST}
+\bitem What features/scale/reference did the method use? What setting changes the evidence versus only the display/selection?
+\bitem What exact rule produced the assignment? What does the output establish, and what does it not establish?
+\bitem If code is shown: constructor settings have no trailing underscore; learned attributes usually do. Fit learns; transform/predict applies.
+\bitem If a plot is shown: identify original dimensions omitted, arbitrary labels/colors, and whether the plot is geometry, fit, or evidence.
+
+\columnbreak
+\topic{HIGH-YIELD CLUSTER TRAPS}
+\bitem Lower inertia with larger $K$ is automatic; it does not validate $K$.
+\bitem K-means centers and GMM means are not necessarily observed rows.
+\bitem Standardization changes assignments; it does not prove equal feature importance.
+\bitem Same plotted location in two features does not imply proximity in all fitted features.
+\bitem Dendrogram horizontal spacing is not distance; merge height depends on linkage.
+\bitem Single linkage can chain; complete can isolate small extreme groups; Ward favors compact groups.
+\bitem DBSCAN border joins but cannot propagate; noise is not automatically bad data.
+\bitem Larger \code{eps} can merge groups even if noise count changes little.
+\bitem GMM hard labels hide uncertainty; strong relative membership is not absolute typicality.
+\bitem Stable/separated $\ne$ causal, real, or useful. Profiles describe fitted members; they do not prove customer types or business causes.
+
+\topic{HW 3A/3B: WHAT TO REMEMBER}
+\bitem Clustering quality is purpose-dependent. Technical cohesion/separation/stability are useful supporting evidence, not a universal definition of a good clustering.
+\bitem Benchmark class labels are only one possible structure. A defensible clustering can differ from known labels if it captures another useful relationship.
+\bitem K-means 3-group wholesale profiles: report counts and medians, but avoid inferring business type. Group overlap in a 2-D plot is expected when fitting six features.
+\bitem Complete-linkage three-group summary placed 402/440 in one group and only 5 in the smallest: a valid cut can still be too broad/imbalanced for the intended account-review purpose.
+\bitem DBSCAN settings trade assigned coverage against distinct groups; noise customers still warrant review rather than automatic exclusion.
+\bitem GMM probabilities can change a review by exposing mixed profiles instead of presenting one categorical label.
+
+\topic{QUICK METHOD TABLE}
+\renewcommand{\arraystretch}{1.03}
+\begin{tabularx}{\columnwidth}{>{\bfseries}p{.20\columnwidth}X}
+K-means & nearest center; SSE; hard; all assigned\\
+Hierarchy & linkage merges; nested cuts; all assigned\\
+DBSCAN & core connectivity; noise; count emerges\\
+GMM & Gaussian density; soft probabilities; all covered\\
+\end{tabularx}
+
+\topic{FAST CALCULATIONS}
+\bitem Euclidean $d(x,y)=\sqrt{\sum_j(x_j-y_j)^2}$; squared distance drives K-means.
+\bitem Silhouette example $a=2,b=5$: $(5-2)/5=.60$.
+\bitem Linkage cross-distances 2 and 8: single=2; average=5; complete=8.
+\bitem DBSCAN: count self and boundary points at exactly \code{eps}.
+\bitem GMM probabilities per row and mixture weights each sum to 1.
+
+\topic{SCOPE CONTROL}
+\trap{Not Part A scope:} Lecture 05a embeddings are before the announced 06b start. Lecture 12a forecasting is after the instructor's stated Part A emphasis ``through 11b.'' Use page 2 for anomaly detection and time-series fundamentals through 11b.
+
+\end{multicols*}
+\newpage
+\hdr{2}{LECTURES 09b--11b $\bullet$ ANOMALY DETECTION + TIME-SERIES FUNDAMENTALS $\bullet$ HW 4 + RELEVANT HW 5a AUDIT CONCEPTS}
+\begin{multicols*}{4}\T
+
+\topic{ANOMALY FOUNDATIONS}
+\bitem A detector converts a chosen meaning of unusualness into a score. Reference defines unusual: mixed collection vs new readings against accepted healthy baseline (novelty). Check operating/ context comparability.
+\bitem Point anomaly: one row departs. Contextual: unusual only within condition/ regime. Collective: relationship/ joint pattern is unusual even when individual values are familiar.
+\bitem SCORE = method-specific unusualness; RULE = threshold/ rank/ budget; FLAG = selected for follow-up; FAULT/ OUTCOME = independently established condition. Do not equate them.
+\bitem Workflow: define target/ reference $\to$ features/ scale $\to$ fit $\to$ orient scores $\to$ rule based on cost/capacity $\to$ investigate records/ context/ sensors $\to$ validate with external outcomes/ new data.
+
+\topic{LOF: FORMULAS + MEANING}
+\bitem For point $p$, $N_k(p)$ excludes self. $r_k(o)$ is distance from receiving neighbor $o$ to its $k$th-nearest other point.
+
+\vspace{0ex} % <--- Move up/down to control the space BEFORE the formula box
+{\centering
+\setlength{\abovedisplayskip}{0pt}      % Strips LaTeX's automatic top math padding
+\setlength{\belowdisplayskip}{0pt}      % Strips LaTeX's automatic bottom math padding
+\setlength{\abovedisplayshortskip}{0pt}
+\setlength{\belowdisplayshortskip}{0pt}
+\fontsize{6}{6}\selectfont 
+\begin{align*}
+\operatorname{reach}_k(p,o) &= \max\{d(p,o),r_k(o)\} \\[0.5ex]
+\operatorname{lrd}_k(p) &= \left[\frac1{|N_k(p)|}\sum_{o\in N_k(p)}\operatorname{reach}_k(p,o)\right]^{-1} \\[0.5ex]
+\operatorname{LOF}_k(p) &= \frac{|N_k(p)|^{-1}\sum_{o\in N_k(p)}\operatorname{lrd}_k(o)}{\operatorname{lrd}_k(p)}
+\end{align*}
+\par}
+\vspace{2.5ex} % <--- THIS WILL NOW WORK: Controls the space AFTER the formulas
+
+\bitem Reachability is directional because receiving neighbor $o$ supplies its radius. LOF near 1=comparable local support; $>1$=lower density than neighbor average. Absolute sparsity alone need not be locally unusual.
+\bitem Values $0,1,3,10,50,60,80$, $k=2$: for 10, neighbors 3,1; reaches 7,9; lrd=.125; neighbor lrds .400,.333; LOF=2.933. For 80, reaches 20,30; lrd=.04; LOF=.917. At $k=3$, 10 falls to .953 and wide group rises to about 2.718.
+\bitem $k$ changes neighborhood evidence and can reverse rankings, so refit. Threshold changes only selection from fixed scores, so no refit. Scaling/features/metric also alter neighborhoods.
+\bitem sklearn fitted collection: \code{-negative\_outlier\_factor\_} gives larger=unusual. \code{kneighbors()} returns ordinary distances; reachability is internal. New rows: fit \code{LocalOutlierFactor(novelty=True)} on reference, reuse scaler, score unseen rows only.
+
+% \columnbreak
+\topic{ISOLATION FOREST}
+\bitem Each node randomly chooses a feature and split between that node's min/max; repeat. Short average path = easy isolation = more unusual after sample-size normalization. Endpoint/ large-gap rows often isolate quickly.
+\bitem Forest averages trees, often built from row samples. \code{n\_estimators} = trees; \code{max\_samples} = rows/tree; \code{random\_state} = repeatability. More trees reduce dependence on one random sequence.
+\bitem sklearn \code{score\_samples}: lower=more anomalous; negate for larger=unusual. Score is not fault probability.
+\bitem LOF asks ``less locally supported than neighbors?'' Isolation Forest asks ``easy to isolate?'' Thus value 10 leads LOF while endpoint 80 leads isolation.
+\bitem LOF distances usually require deliberate scaling. Isolation Forest's one-feature splits are invariant to positive linear unit changes, so scaling is generally unnecessary for that reason.
+
+\columnbreak
+\topic{THRESHOLDS, BUDGETS, METRICS}
+\bitem For larger=unusual scores, lowering threshold can only preserve/add flags; workload and recall cannot decrease; precision can rise or fall. Scores/ranking stay fixed. Do not share a numerical cutoff across detector scales.
+\bitem Fixed budget: rank and review top $N$; cutoff varies by collection. Fixed numerical threshold: workload varies. State tie rule; ties may select $>N$.
+\bitem \code{contamination} calibrates a training cutoff/expected fraction; in lecture examples it changes flags/\code{offset\_}, not raw scores or which rows influence the fitted reference.
+
+\nopagebreak
+{\centering
+\setlength{\tabcolsep}{2pt} % Tightens horizontal padding inside cells
+\renewcommand{\arraystretch}{0.85} % Slightly relaxes line spacing within the table rows
+\fontsize{4.255}{5.5}\selectfont % Uses your custom small text size
+\vspace{2ex}
+
+\begin{tabularx}{\linewidth}{|
+    >{\hsize=1.3\hsize}X|
+    >{\hsize=0.7\hsize}X|
+    >{\hsize=1\hsize}X|}
+    \hline
+    \textbf{Metric Definition} & \multicolumn{2}{l|}{\textbf{Formula}} \\ \hline
+    \textbf{TP} = flag + outcome & \multicolumn{2}{l|}{\textbf{Precision} $= TP / (TP + FP)$} \\ \hline
+    \textbf{FP} = flag + no outcome & \multicolumn{2}{l|}{\textbf{Recall} $= TP / (TP + FN)$} \\ \hline
+    \textbf{FN} = no flag + outcome & \multicolumn{2}{l|}{\textbf{Specificity} $= TN / (TN + FP)$} \\ \hline
+    \textbf{TN} = no flag + no outcome & \multicolumn{2}{l|}{\textbf{FPR} $= FP / (FP + TN)$} \\ \hline
+    % The final row automatically splits into three separate cells:
+    \textbf{F\textsubscript{1} Score} $= 2PR / (P + R)$ & \textbf{Flag}=Pred(Yes) & \textbf{Outcome}=Actual(Yes) \\ \hline
+    \end{tabularx}
+\vspace{0ex}
+\par}
+
+\bitem Reviewing only flags can estimate precision, but recall needs total positives or representative review of unflagged rows. Flags count workload, not faults.
+
+% \columnbreak
+\topic{WINE VALIDATION + HW4}
+\bitem Lecture red-wine reference: 1,599 red/4,898 white; 11 chemistry features; quality excluded. 150 mg/L sulfur dioxide exceeds 99.4\% of red but 63.1\% of white values: pooling obscures context.
+\bitem Red example: standardized chemistry; LOF $k=20$; Isolation Forest 300 trees, \code{max\_samples=256}; budget 50; cutoffs about 1.506/.554; only 19 overlap. Detector choice changes investigations.
+\bitem Low rating $\le4$: 63/1599. LOF top 50: TP=7, FP=43, FN=56, TN=1493; precision 14\%; recall 11.1\%. Review 100 adds 3 low-rated +47 others: precision 10\%, recall 15.9\%.
+\bitem Uniform random expected count $=50(63)/1599=1.97$. Hypergeometric one-sided $p\approx.00275$ for $X\ge7$: fixed LOF list has stronger low-rating association than random review. Not causation, every flag, completeness, optimality, or future generalization.
+\bitem HW4 white wine: 183/4898 low-rated; budget 150 random expectation $150(183)/4898=5.60$. LOF found 22 (14.7\% precision, 12.0\% recall); Isolation Forest 23 (15.3\%, 12.6\%); only 52 shared, 98 method-only each.
+\bitem HW4 LOF $k=20\to10$: 106 stayed, 44 entered, 44 left; low-rated found 22$\to$19; precision 14.7\%$\to$12.7\%. Same workload does not mean a stable list.
+
+% \columnbreak
+\topic{CONTAMINATION + MASKING}
+\bitem Reference contamination: target-abnormal behavior influences fitted reference. Masking: similar abnormal rows support one another and receive less unusual scores.
+\bitem Demo with LOF $k=20$: remote group 5$\to$30 makes focal LOF 6.19$\to$1.01 because all 20 neighbors can become remote peers. LOF rank 5/205$\to$125/230; Isolation Forest rank 2/205$\to$25/230.
+\bitem Changing cutoff/\code{contamination} does not cure masking because raw relationships remain. Use accepted-normal reference, regime-specific comparisons, provenance checks, temporal holdout, and reference-composition sensitivity; investigate groups of anomalies.
+\bitem New-data evaluation: freeze features, scaler, reference model, and budget/threshold; score separate collection before outcomes; then reveal outcomes and compare with same-size baseline. Keep related/repeated rows together. Scoring preserves reference; refitting updates it and can introduce masking.
+
+% \columnbreak
+\topic{TIME INDEX + MOVING AVERAGES}
+\bitem Parse dates with explicit format; sort; require unique labels, no missing values, expected complete calendar (\code{freq="QS"}/\code{"MS"}). A row lag equals a time lag only when spacing is verified. Quarter-start labels represent whole quarters, not one day.
+\bitem \code{.loc["1992"]} selects a year; partial date slices include endpoints. \code{shift(h)} aligns earlier values; initial unavailable pairs are NaN.
+\bitem Trailing $m$-MA uses current/prior rows. Centered MA uses before/after observations and creates endpoint NaNs. Centered 3-MA example: $(443+410+420)/3=424.33$ at middle quarter. Centered windows use future values and leak in real-time use.
+
+\columnbreak
+\topic{ADDITIVE DECOMPOSITION}
+\bitem $y_t=T_t+S_t+R_t$ in original units. Fitted $\hat y_t=T_t+S_t$; $R_t=y_t-\hat y_t$. Exact reconstruction follows from remainder definition; it does not establish forecast accuracy or causes.
+\bitem Classical workflow: moving-average trend; detrend; average by season; center/repeat seasonal effects; remainder. \code{seasonal\_decompose(...,model="additive",period=m)} uses centered trend and fixed mean-zero seasonal effects; even periods need special centering and lose endpoints.
+\bitem Limitations: fixed seasonality, complete-window loss, outlier influence. Full-history components are descriptive fits, not forecasts.
+\bitem STL = Seasonal and Trend decomposition using Loess. \code{STL(y,period=12,seasonal=13,robust=True)}: period=cycle length; odd seasonal window smooths across same-season occurrences; robust reweighting reduces impact of large remainders; endpoint support is less balanced. Flexible components are not uniquely true.
+\bitem Seasonal adjustment: $y_t^{adj}=y_t-S_t=T_t+R_t$; retains units/level and unusual departures while removing recurring pattern. It is \emph{not} $y_t-T_t$ and not seasonal differencing.
+\key{HW5a audit lesson:} cement 2006 Q4$\to$2007 Q1 observed change $-311$ thousand tonnes; classical adjusted $-88.1$; STL adjusted $-0.6$. Most apparent drop was seasonal; additive effects are constant amounts, not percentages.
+
+% \columnbreak
+\topic{LAGS + ACF}
+\bitem Lag $h$ compares $y_t$ with $y_{t-h}$. Complete quarterly lag 4=same quarter prior year. Lag plot x=earlier, y=current. Seasonal ACF peaks often occur at multiples of period; opposite seasons may be negative; trend can create persistent positive ACF.
+\bitem Sample ACF:
+
+\vspace{-4ex} % <--- Move up/down to control the space BEFORE the formula box
+{\centering
+\setlength{\abovedisplayskip}{0pt}      % Strips LaTeX's automatic top math padding
+\setlength{\belowdisplayskip}{0pt}      % Strips LaTeX's automatic bottom math padding
+\setlength{\abovedisplayshortskip}{0pt}
+\setlength{\belowdisplayshortskip}{0pt}
+\fontsize{6}{6}\selectfont 
+\begin{align*}
+r_h &= \frac{\sum_{t=h+1}^{T}(y_t-\bar y)(y_{t-h}-\bar y)}{\sum_{t=1}^{T}(y_t-\bar y)^2}
+\end{align*}
+\par}
+\vspace{2.5ex} % <--- Controls the space AFTER the formula
+
+Uses one full-series mean/denominator, so differs slightly from Pearson correlation on shortened pairs. ACF measures linear dependence.
+\bitem White noise: mean 0, constant finite variance, zero ACF at nonzero lags; iid is sufficient, not necessary. Approx pointwise 95\% bounds $\pm1.96/\sqrt T$. Many inspected lags increase chance crossings. Inside bounds/zero ACF does not prove independence.
+\bitem Ljung--Box null through $H$: population autocorrelations at lags $1\ldots H$ are jointly zero. \code{acorr\_ljungbox(x,lags=[10])} gives one joint test through 10. Small $p$ rejects; large $p$ means compatible, not proof of independence/white noise.
+\key{HW5a dependence check:} quarterly cement change ending 2007 Q1=$-311$ (2006 Q4 to 2007 Q1); annual change=$+113$ (2006 Q1 2027 to 2007 Q1 2140). For annual-change series, Ljung--Box $Q(8)=54.94$, $p=4.54\times10^{-9}$: remaining autocorrelation. This does not itself test stationarity or prove more differencing is needed.
+
+% \columnbreak
+\topic{STATIONARITY + DIFFERENCING}
+\bitem Stationary: joint distribution unchanged by time shift; changing mean, spread, or fixed seasonality violates it. Stationary series may remain dependent. Constant expectation is insufficient: random-walk level variance grows with time.
+\bitem Ordinary difference $\Delta y_t=y_t-y_{t-1}$ = change per observation interval; \code{diff()} loses first row. For random walk $y_t=y_{t-1}+e_t$, differencing recovers increments; if expected next increment is zero, current level is a simple forecast.
+\bitem Seasonal difference $\Delta_m y_t=y_t-y_{t-m}$; monthly annual \code{diff(12)} loses first 12. Seasonal adjustment subtracts estimated $S_t$ and retains level; seasonal difference subtracts observed prior season and produces change.
+\bitem Log seasonal difference $\log y_t-\log y_{t-m}=\log(y_t/y_{t-m})$; .10 means ratio $e^{.10}=1.105$, about 10.5\% growth. Logs can stabilize proportional seasonal swings.
+\bitem Inspect time plot + ACF after transformation. Remaining ACF can be useful stationary dependence. Unnecessary differencing may introduce dependence. Second ordinary difference is change in first differences, not lag-2 difference.
+
+\columnbreak
+\topic{LIGHT CODE INTERPRETATION + TRAPS}
+\bitem \code{series.diff()} means previous row; \code{diff(4)} means same quarter last year only with complete quarterly spacing. \code{shift(h)} aligns levels without subtracting.
+\bitem \code{rolling(3,center=True).mean()} uses future row and produces endpoint NaNs. \code{dropna()} changes which observations enter calculations.
+\bitem \code{seasonal\_decompose(y,model="additive",period=12)} returns \code{trend}, \code{seasonal}, \code{resid}. Seasonally adjusted is \code{y-result.seasonal}.
+\bitem A decomposition fitted on the complete series may describe it, but cannot be cited as out-of-sample predictive evidence.
+\bitem Always identify tested series: level, adjusted series, remainder, ordinary difference, or seasonal difference. The same ACF/test has different meaning on each.
+\trap{Not Part A emphasis:} 12a forecasting is after the announcement's ``concepts, theory, and principles through lecture 11b.'' Keep only leakage/forecast distinctions already necessary to interpret centered windows and historical decomposition; omit detailed forecasting models/metrics.
+
+\topic{FINAL EXAM CHECKLIST}
+\bitem Name observation/reference, features, units, scale, and time interval.
+\bitem Distinguish score from rule/flag/outcome; read score direction.
+\bitem Distinguish evidence-changing settings ($k$, features, scaler, reference) from threshold-only changes.
+\bitem For time series, verify calendar before interpreting row lags; state what differencing changes the quantity into.
+\bitem State null and tested lags for Ljung--Box; reject/compatible, never ``prove independence.''
+\bitem State what evidence does NOT prove: association$\ne$causation; reconstruction$\ne$forecast accuracy; anomaly$\ne$fault; cluster$\ne$population.
+
+\end{multicols*}
+\end{document}
